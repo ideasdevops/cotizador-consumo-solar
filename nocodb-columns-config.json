@@ -1,0 +1,78 @@
+{
+  "base_id": "pjo0a1kfnvm1ai3",
+  "tables": {
+    "contactos": {
+      "table_id": "m7i75nx5rkwockg",
+      "columns": {
+        "id": "id",
+        "nombre": "nombre_cliente",
+        "email": "email_cliente", 
+        "telefono": "telefono_cliente",
+        "mensaje": "mensaje_consulta",
+        "fecha": "fecha_consulta",
+        "estado": "estado_consulta",
+        "origen": "origen_consulta",
+        "notas": "notas_internas",
+        "fecha_respuesta": "fecha_respuesta",
+        "usuario_respuesta": "usuario_respuesta"
+      }
+    },
+    "cotizaciones_solares": {
+      "table_id": "cotizaciones_solares_table_id",
+      "columns": {
+        "id": "id",
+        "cliente_id": "cliente_id",
+        "nombre": "nombre_cliente",
+        "email": "email_cliente",
+        "ubicacion": "ubicacion_proyecto",
+        "consumo_mensual": "consumo_mensual_kwh",
+        "tipo_tarifa": "tipo_tarifa",
+        "area_disponible": "area_disponible_m2",
+        "tipo_instalacion": "tipo_instalacion",
+        "potencia_requerida": "potencia_requerida_kwp",
+        "cantidad_paneles": "cantidad_paneles",
+        "generacion_mensual": "generacion_mensual_kwh",
+        "ahorro_mensual": "ahorro_mensual_ars",
+        "inversion_total": "inversion_total_ars",
+        "retorno_inversion": "retorno_inversion_anos",
+        "estado": "estado_cotizacion",
+        "fecha_creacion": "fecha_creacion",
+        "valida_hasta": "valida_hasta",
+        "notas": "notas_proyecto",
+        "archivo_pdf": "archivo_pdf"
+      }
+    },
+    "materiales_solares": {
+      "table_id": "materiales_solares_table_id",
+      "columns": {
+        "id": "id",
+        "tipo": "tipo_material",
+        "marca": "marca",
+        "modelo": "modelo",
+        "potencia_watts": "potencia_watts",
+        "potencia_kw": "potencia_kw",
+        "precio_ars": "precio_ars",
+        "precio_por_kw": "precio_por_kw",
+        "stock": "stock_disponible",
+        "activo": "activo",
+        "especificaciones": "especificaciones_tecnicas",
+        "garantia": "garantia_anos",
+        "proveedor": "proveedor",
+        "fecha_actualizacion": "fecha_actualizacion"
+      }
+    },
+    "logs_sistema": {
+      "table_id": "logs_sistema_table_id",
+      "columns": {
+        "id": "id",
+        "tipo_evento": "tipo_evento",
+        "mensaje": "mensaje",
+        "nivel": "nivel_log",
+        "usuario": "usuario",
+        "ip_cliente": "ip_cliente",
+        "fecha_hora": "fecha_hora",
+        "datos_adicionales": "datos_adicionales"
+      }
+    }
+  }
+}

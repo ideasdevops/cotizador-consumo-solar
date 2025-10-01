@@ -1,0 +1,54 @@
+id,tabla,descripcion,tipo_dato,requerido,unico,indice
+1,contactos,ID único del contacto,Number,true,true,true
+2,contactos,Nombre del cliente,Text,true,false,false
+3,contactos,Email del cliente,Email,true,false,false
+4,contactos,Teléfono del cliente,Phone,false,false,false
+5,contactos,Mensaje de consulta,LongText,true,false,false
+6,contactos,Fecha de consulta,DateTime,true,false,true
+7,contactos,Estado de la consulta,Select,true,false,false
+8,contactos,Origen de la consulta,Select,true,false,false
+9,contactos,Notas internas,LongText,false,false,false
+10,contactos,Fecha de respuesta,DateTime,false,false,false
+11,contactos,Usuario que respondió,Text,false,false,false
+12,cotizaciones_solares,ID único de la cotización,Number,true,true,true
+13,cotizaciones_solares,ID del cliente,Number,true,false,true
+14,cotizaciones_solares,Nombre del cliente,Text,true,false,false
+15,cotizaciones_solares,Email del cliente,Email,true,false,false
+16,cotizaciones_solares,Ubicación del proyecto,Text,true,false,false
+17,cotizaciones_solares,Consumo mensual kWh,Number,true,false,false
+18,cotizaciones_solares,Tipo de tarifa,Select,true,false,false
+19,cotizaciones_solares,Área disponible m²,Number,true,false,false
+20,cotizaciones_solares,Tipo de instalación,Select,true,false,false
+21,cotizaciones_solares,Potencia requerida kWp,Number,true,false,false
+22,cotizaciones_solares,Cantidad de paneles,Number,true,false,false
+23,cotizaciones_solares,Generación mensual kWh,Number,true,false,false
+24,cotizaciones_solares,Ahorro mensual ARS,Currency,true,false,false
+25,cotizaciones_solares,Inversión total ARS,Currency,true,false,false
+26,cotizaciones_solares,Retorno de inversión años,Number,true,false,false
+27,cotizaciones_solares,Estado de la cotización,Select,true,false,false
+28,cotizaciones_solares,Fecha de creación,DateTime,true,false,true
+29,cotizaciones_solares,Válida hasta,DateTime,true,false,false
+30,cotizaciones_solares,Notas del proyecto,LongText,false,false,false
+31,cotizaciones_solares,Archivo PDF,Attachment,false,false,false
+32,materiales_solares,ID único del material,Number,true,true,true
+33,materiales_solares,Tipo de material,Select,true,false,false
+34,materiales_solares,Marca,Text,true,false,false
+35,materiales_solares,Modelo,Text,true,false,false
+36,materiales_solares,Potencia watts,Number,false,false,false
+37,materiales_solares,Potencia kW,Number,false,false,false
+38,materiales_solares,Precio ARS,Currency,true,false,false
+39,materiales_solares,Precio por kW,Currency,false,false,false
+40,materiales_solares,Stock disponible,Number,false,false,false
+41,materiales_solares,Activo,Checkbox,true,false,false
+42,materiales_solares,Especificaciones técnicas,LongText,false,false,false
+43,materiales_solares,Garantía años,Number,false,false,false
+44,materiales_solares,Proveedor,Text,false,false,false
+45,materiales_solares,Fecha de actualización,DateTime,true,false,true
+46,logs_sistema,ID único del log,Number,true,true,true
+47,logs_sistema,Tipo de evento,Select,true,false,false
+48,logs_sistema,Mensaje,LongText,true,false,false
+49,logs_sistema,Nivel de log,Select,true,false,false
+50,logs_sistema,Usuario,Text,false,false,false
+51,logs_sistema,IP del cliente,Text,false,false,false
+52,logs_sistema,Fecha y hora,DateTime,true,false,true
+53,logs_sistema,Datos adicionales,JSON,false,false,false
