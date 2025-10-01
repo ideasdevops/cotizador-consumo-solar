@@ -418,6 +418,348 @@ async def test_solar_calculator() -> Dict[str, Any]:
             "message": "Error en el calculador solar"
         }
 
+@router.post("/materials/sync")
+async def sync_materials_from_external_source():
+    """Sincronizar materiales desde fuente externa y guardar en NocoDB"""
+    try:
+        logger.info("Iniciando sincronización de materiales desde fuente externa...")
+        
+        # Obtener materiales desde fuente externa (simulada)
+        external_materials = await get_external_solar_materials()
+        
+        # Guardar cada material en NocoDB
+        saved_count = 0
+        for material in external_materials:
+            try:
+                success = await nocodb_service.save_material(material)
+                if success:
+                    saved_count += 1
+                    logger.info(f"Material guardado: {material.get('marca', '')} {material.get('modelo', '')}")
+                else:
+                    logger.error(f"Error guardando material: {material.get('marca', '')} {material.get('modelo', '')}")
+            except Exception as e:
+                logger.error(f"Error procesando material: {e}")
+        
+        return {
+            "status": "success",
+            "message": f"Sincronización completada: {saved_count}/{len(external_materials)} materiales guardados",
+            "total_materials": len(external_materials),
+            "saved_materials": saved_count
+        }
+        
+    except Exception as e:
+        logger.error(f"Error en sincronización de materiales: {e}", exc_info=True)
+        return {
+            "status": "error",
+            "error": str(e),
+            "message": "Error en sincronización de materiales"
+        }
+
+@router.get("/materials/from-nocodb")
+async def get_materials_from_nocodb():
+    """Obtener materiales desde NocoDB para el frontend"""
+    try:
+        logger.info("Obteniendo materiales desde NocoDB...")
+        
+        # Obtener materiales desde NocoDB
+        materials_data = await nocodb_service.get_materials_from_nocodb()
+        
+        if materials_data:
+            # Organizar materiales por tipo para el frontend
+            organized_materials = {
+                "panels": [],
+                "inverters": [],
+                "batteries": [],
+                "mounting": [],
+                "cables": [],
+                "protection": []
+            }
+            
+            for material in materials_data:
+                material_type = material.get("tipo_material", "").lower()
+                
+                if material_type == "panel":
+                    organized_materials["panels"].append({
+                        "id": material.get("id"),
+                        "brand": material.get("marca", ""),
+                        "model": material.get("modelo", ""),
+                        "power_watts": material.get("potencia_watts", 0),
+                        "price_ars": material.get("precio_ars", 0),
+                        "active": material.get("activo", True),
+                        "specifications": material.get("especificaciones_tecnicas", ""),
+                        "warranty_years": material.get("garantia_anos", 0),
+                        "supplier": material.get("proveedor", "")
+                    })
+                elif material_type == "inversor":
+                    organized_materials["inverters"].append({
+                        "id": material.get("id"),
+                        "brand": material.get("marca", ""),
+                        "model": material.get("modelo", ""),
+                        "power_kw": material.get("potencia_kw", 0),
+                        "price_ars": material.get("precio_ars", 0),
+                        "active": material.get("activo", True),
+                        "specifications": material.get("especificaciones_tecnicas", ""),
+                        "warranty_years": material.get("garantia_anos", 0),
+                        "supplier": material.get("proveedor", "")
+                    })
+                elif material_type == "bateria":
+                    organized_materials["batteries"].append({
+                        "id": material.get("id"),
+                        "brand": material.get("marca", ""),
+                        "model": material.get("modelo", ""),
+                        "power_kw": material.get("potencia_kw", 0),
+                        "price_ars": material.get("precio_ars", 0),
+                        "active": material.get("activo", True),
+                        "specifications": material.get("especificaciones_tecnicas", ""),
+                        "warranty_years": material.get("garantia_anos", 0),
+                        "supplier": material.get("proveedor", "")
+                    })
+                elif material_type == "montaje":
+                    organized_materials["mounting"].append({
+                        "id": material.get("id"),
+                        "brand": material.get("marca", ""),
+                        "model": material.get("modelo", ""),
+                        "price_per_kw": material.get("precio_por_kw", 0),
+                        "active": material.get("activo", True),
+                        "specifications": material.get("especificaciones_tecnicas", ""),
+                        "supplier": material.get("proveedor", "")
+                    })
+                elif material_type == "cable":
+                    organized_materials["cables"].append({
+                        "id": material.get("id"),
+                        "brand": material.get("marca", ""),
+                        "model": material.get("modelo", ""),
+                        "price_ars": material.get("precio_ars", 0),
+                        "active": material.get("activo", True),
+                        "specifications": material.get("especificaciones_tecnicas", ""),
+                        "supplier": material.get("proveedor", "")
+                    })
+                elif material_type == "proteccion":
+                    organized_materials["protection"].append({
+                        "id": material.get("id"),
+                        "brand": material.get("marca", ""),
+                        "model": material.get("modelo", ""),
+                        "price_ars": material.get("precio_ars", 0),
+                        "active": material.get("activo", True),
+                        "specifications": material.get("especificaciones_tecnicas", ""),
+                        "supplier": material.get("proveedor", "")
+                    })
+            
+            logger.info(f"Materiales organizados: {len(materials_data)} registros")
+            return organized_materials
+            
+        else:
+            logger.warning("No se encontraron materiales en NocoDB")
+            return {
+                "panels": [],
+                "inverters": [],
+                "batteries": [],
+                "mounting": [],
+                "cables": [],
+                "protection": []
+            }
+            
+    except Exception as e:
+        logger.error(f"Error obteniendo materiales desde NocoDB: {e}", exc_info=True)
+        return {
+            "status": "error",
+            "error": str(e),
+            "message": "Error obteniendo materiales desde NocoDB"
+        }
+
+
+async def get_external_solar_materials() -> List[Dict[str, Any]]:
+    """Obtener materiales solares desde fuente externa (simulada)"""
+    # En producción, aquí harías una llamada a una API externa
+    # Por ahora, simulamos con datos de ejemplo
+    return [
+        # Paneles solares
+        {
+            "tipo_material": "panel",
+            "marca": "JinkoSolar",
+            "modelo": "JKM400M-54HL4-B",
+            "potencia_watts": 400,
+            "potencia_kw": 0.4,
+            "precio_ars": 180000,
+            "precio_por_kw": 450000,
+            "stock_disponible": 50,
+            "activo": True,
+            "especificaciones_tecnicas": "Panel monocristalino de alta eficiencia",
+            "garantia_anos": 25,
+            "proveedor": "JinkoSolar Argentina",
+            "fecha_actualizacion": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        },
+        {
+            "tipo_material": "panel",
+            "marca": "Trina Solar",
+            "modelo": "TSM-400DE14A(II)",
+            "potencia_watts": 400,
+            "potencia_kw": 0.4,
+            "precio_ars": 175000,
+            "precio_por_kw": 437500,
+            "stock_disponible": 45,
+            "activo": True,
+            "especificaciones_tecnicas": "Panel monocristalino con tecnología PERC",
+            "garantia_anos": 25,
+            "proveedor": "Trina Solar Argentina",
+            "fecha_actualizacion": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        },
+        {
+            "tipo_material": "panel",
+            "marca": "LG Solar",
+            "modelo": "LG400N2W-A5",
+            "potencia_watts": 400,
+            "potencia_kw": 0.4,
+            "precio_ars": 195000,
+            "precio_por_kw": 487500,
+            "stock_disponible": 30,
+            "activo": True,
+            "especificaciones_tecnicas": "Panel monocristalino con tecnología NeON",
+            "garantia_anos": 25,
+            "proveedor": "LG Electronics",
+            "fecha_actualizacion": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        },
+        # Inversores
+        {
+            "tipo_material": "inversor",
+            "marca": "SMA",
+            "modelo": "STP 5000TL-20",
+            "potencia_watts": 5000,
+            "potencia_kw": 5.0,
+            "precio_ars": 800000,
+            "precio_por_kw": 160000,
+            "stock_disponible": 25,
+            "activo": True,
+            "especificaciones_tecnicas": "Inversor string de 5kW",
+            "garantia_anos": 10,
+            "proveedor": "SMA Argentina",
+            "fecha_actualizacion": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        },
+        {
+            "tipo_material": "inversor",
+            "marca": "Fronius",
+            "modelo": "Primo 5.0-1",
+            "potencia_watts": 5000,
+            "potencia_kw": 5.0,
+            "precio_ars": 750000,
+            "precio_por_kw": 150000,
+            "stock_disponible": 30,
+            "activo": True,
+            "especificaciones_tecnicas": "Inversor string de 5kW con WiFi",
+            "garantia_anos": 10,
+            "proveedor": "Fronius Argentina",
+            "fecha_actualizacion": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        },
+        {
+            "tipo_material": "inversor",
+            "marca": "Huawei",
+            "modelo": "SUN2000-5KTL-L1",
+            "potencia_watts": 5000,
+            "potencia_kw": 5.0,
+            "precio_ars": 700000,
+            "precio_por_kw": 140000,
+            "stock_disponible": 35,
+            "activo": True,
+            "especificaciones_tecnicas": "Inversor string de 5kW inteligente",
+            "garantia_anos": 10,
+            "proveedor": "Huawei Argentina",
+            "fecha_actualizacion": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        },
+        # Baterías
+        {
+            "tipo_material": "bateria",
+            "marca": "Tesla",
+            "modelo": "Powerwall 2",
+            "potencia_watts": 13500,
+            "potencia_kw": 13.5,
+            "precio_ars": 4500000,
+            "precio_por_kw": 333333,
+            "stock_disponible": 15,
+            "activo": True,
+            "especificaciones_tecnicas": "Batería de litio de 13.5kWh",
+            "garantia_anos": 10,
+            "proveedor": "Tesla Argentina",
+            "fecha_actualizacion": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        },
+        {
+            "tipo_material": "bateria",
+            "marca": "LG Chem",
+            "modelo": "RESU10H",
+            "potencia_watts": 9600,
+            "potencia_kw": 9.6,
+            "precio_ars": 3200000,
+            "precio_por_kw": 333333,
+            "stock_disponible": 20,
+            "activo": True,
+            "especificaciones_tecnicas": "Batería de litio de 9.6kWh",
+            "garantia_anos": 10,
+            "proveedor": "LG Chem Argentina",
+            "fecha_actualizacion": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        },
+        # Sistemas de montaje
+        {
+            "tipo_material": "montaje",
+            "marca": "Schletter",
+            "modelo": "FS-R",
+            "potencia_watts": 0,
+            "potencia_kw": 0,
+            "precio_ars": 0,
+            "precio_por_kw": 150000,
+            "stock_disponible": 100,
+            "activo": True,
+            "especificaciones_tecnicas": "Sistema de montaje para techo inclinado",
+            "garantia_anos": 20,
+            "proveedor": "Schletter Argentina",
+            "fecha_actualizacion": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        },
+        {
+            "tipo_material": "montaje",
+            "marca": "K2 Systems",
+            "modelo": "K2 Solar Mount",
+            "potencia_watts": 0,
+            "potencia_kw": 0,
+            "precio_ars": 0,
+            "precio_por_kw": 140000,
+            "stock_disponible": 80,
+            "activo": True,
+            "especificaciones_tecnicas": "Sistema de montaje universal",
+            "garantia_anos": 20,
+            "proveedor": "K2 Systems Argentina",
+            "fecha_actualizacion": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        },
+        # Cables
+        {
+            "tipo_material": "cable",
+            "marca": "Helukabel",
+            "modelo": "Solar Cable 4mm2",
+            "potencia_watts": 0,
+            "potencia_kw": 0,
+            "precio_ars": 25000,
+            "precio_por_kw": 0,
+            "stock_disponible": 500,
+            "activo": True,
+            "especificaciones_tecnicas": "Cable solar 4mm2 DC",
+            "garantia_anos": 10,
+            "proveedor": "Helukabel Argentina",
+            "fecha_actualizacion": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        },
+        # Protecciones
+        {
+            "tipo_material": "proteccion",
+            "marca": "ABB",
+            "modelo": "OVR 1P 25A",
+            "potencia_watts": 0,
+            "potencia_kw": 0,
+            "precio_ars": 45000,
+            "precio_por_kw": 0,
+            "stock_disponible": 200,
+            "activo": True,
+            "especificaciones_tecnicas": "Protector contra sobretensiones",
+            "garantia_anos": 5,
+            "proveedor": "ABB Argentina",
+            "fecha_actualizacion": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+    ]
 
 async def send_quote_email(quote: SolarQuoteResponse):
     """Enviar email con la cotización (función de background)"""
@@ -435,20 +777,147 @@ async def send_quote_email(quote: SolarQuoteResponse):
 
 # Rutas de compatibilidad con el frontend existente
 @router.get("/materials")
-async def get_all_materials() -> Dict[str, Any]:
-    """Obtener todos los materiales (endpoint de compatibilidad)"""
+async def get_materials():
+    """Obtener lista de materiales solares desde NocoDB"""
     try:
-        return {
-            "panels": materials_service.get_panels(),
-            "inverters": materials_service.get_inverters(),
-            "batteries": materials_service.get_batteries(),
-            "mounting": materials_service.get_mounting_systems(),
-            "cables": materials_service.get_cables(),
-            "protection": materials_service.get_protection_devices()
-        }
+        logger.info("Obteniendo materiales desde NocoDB...")
+        
+        # Obtener materiales desde NocoDB
+        materials_data = await nocodb_service.get_materials_from_nocodb()
+        
+        if materials_data:
+            # Organizar materiales por tipo para el frontend
+            organized_materials = {
+                "panels": [],
+                "inverters": [],
+                "batteries": [],
+                "mounting": [],
+                "cables": [],
+                "protection": []
+            }
+            
+            for material in materials_data:
+                material_type = material.get("tipo_material", "").lower()
+                
+                if material_type == "panel":
+                    organized_materials["panels"].append({
+                        "id": material.get("id"),
+                        "brand": material.get("marca", ""),
+                        "model": material.get("modelo", ""),
+                        "power_watts": material.get("potencia_watts", 0),
+                        "price_ars": material.get("precio_ars", 0),
+                        "active": material.get("activo", True),
+                        "specifications": material.get("especificaciones_tecnicas", ""),
+                        "warranty_years": material.get("garantia_anos", 0),
+                        "supplier": material.get("proveedor", "")
+                    })
+                elif material_type == "inversor":
+                    organized_materials["inverters"].append({
+                        "id": material.get("id"),
+                        "brand": material.get("marca", ""),
+                        "model": material.get("modelo", ""),
+                        "power_kw": material.get("potencia_kw", 0),
+                        "price_ars": material.get("precio_ars", 0),
+                        "active": material.get("activo", True),
+                        "specifications": material.get("especificaciones_tecnicas", ""),
+                        "warranty_years": material.get("garantia_anos", 0),
+                        "supplier": material.get("proveedor", "")
+                    })
+                elif material_type == "bateria":
+                    organized_materials["batteries"].append({
+                        "id": material.get("id"),
+                        "brand": material.get("marca", ""),
+                        "model": material.get("modelo", ""),
+                        "power_kw": material.get("potencia_kw", 0),
+                        "price_ars": material.get("precio_ars", 0),
+                        "active": material.get("activo", True),
+                        "specifications": material.get("especificaciones_tecnicas", ""),
+                        "warranty_years": material.get("garantia_anos", 0),
+                        "supplier": material.get("proveedor", "")
+                    })
+                elif material_type == "montaje":
+                    organized_materials["mounting"].append({
+                        "id": material.get("id"),
+                        "brand": material.get("marca", ""),
+                        "model": material.get("modelo", ""),
+                        "price_per_kw": material.get("precio_por_kw", 0),
+                        "active": material.get("activo", True),
+                        "specifications": material.get("especificaciones_tecnicas", ""),
+                        "supplier": material.get("proveedor", "")
+                    })
+                elif material_type == "cable":
+                    organized_materials["cables"].append({
+                        "id": material.get("id"),
+                        "brand": material.get("marca", ""),
+                        "model": material.get("modelo", ""),
+                        "price_ars": material.get("precio_ars", 0),
+                        "active": material.get("activo", True),
+                        "specifications": material.get("especificaciones_tecnicas", ""),
+                        "supplier": material.get("proveedor", "")
+                    })
+                elif material_type == "proteccion":
+                    organized_materials["protection"].append({
+                        "id": material.get("id"),
+                        "brand": material.get("marca", ""),
+                        "model": material.get("modelo", ""),
+                        "price_ars": material.get("precio_ars", 0),
+                        "active": material.get("activo", True),
+                        "specifications": material.get("especificaciones_tecnicas", ""),
+                        "supplier": material.get("proveedor", "")
+                    })
+            
+            logger.info(f"Materiales organizados: {len(materials_data)} registros")
+            return organized_materials
+            
+        else:
+            logger.warning("No se encontraron materiales en NocoDB, usando materiales por defecto")
+            # Fallback a materiales por defecto
+            return {
+                "panels": [
+                    {
+                        "id": "panel_default",
+                        "brand": "JinkoSolar",
+                        "model": "JKM400M-54HL4-B",
+                        "power_watts": 400,
+                        "price_ars": 180000,
+                        "active": True,
+                        "specifications": "Panel monocristalino de alta eficiencia",
+                        "warranty_years": 25,
+                        "supplier": "JinkoSolar Argentina"
+                    }
+                ],
+                "inverters": [
+                    {
+                        "id": "inverter_default",
+                        "brand": "SMA",
+                        "model": "STP 5000TL-20",
+                        "power_kw": 5.0,
+                        "price_ars": 800000,
+                        "active": True,
+                        "specifications": "Inversor string de 5kW",
+                        "warranty_years": 10,
+                        "supplier": "SMA Argentina"
+                    }
+                ],
+                "batteries": [],
+                "mounting": [
+                    {
+                        "id": "mounting_default",
+                        "brand": "Schletter",
+                        "model": "FS-R",
+                        "price_per_kw": 150000,
+                        "active": True,
+                        "specifications": "Sistema de montaje para techo inclinado",
+                        "supplier": "Schletter Argentina"
+                    }
+                ],
+                "cables": [],
+                "protection": []
+            }
+            
     except Exception as e:
-        logger.error(f"Error obteniendo todos los materiales: {e}")
-        raise HTTPException(status_code=500, detail="Error interno del servidor")
+        logger.error(f"Error obteniendo materiales: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Error obteniendo materiales: {str(e)}")
 
 
 @router.post("/calculate")

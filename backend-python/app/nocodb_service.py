@@ -275,6 +275,48 @@ class NocodbService:
             logger.error(f"Error obteniendo cotizaciones: {e}")
             return None
     
+    async def get_materials_from_nocodb(self, limit: int = 1000) -> Optional[List[Dict[str, Any]]]:
+        """
+        Obtener materiales desde NocoDB
+        """
+        try:
+            logger.info(f"🔄 Obteniendo materiales desde NocoDB (límite: {limit})")
+            
+            params = {
+                "limit": limit,
+                "sort": "-fecha_actualizacion"
+            }
+            
+            async with aiohttp.ClientSession() as session:
+                async with session.get(
+                    self.materiales_url,
+                    params=params,
+                    headers=self.headers,
+                    timeout=aiohttp.ClientTimeout(total=30)
+                ) as response:
+                    
+                    logger.info(f"📡 Respuesta recibida de NocoDB (Materiales): {response.status}")
+                    
+                    if response.status == 200:
+                        result = await response.json()
+                        materials = result.get("list", [])
+                        logger.info(f"✅ Materiales obtenidos exitosamente: {len(materials)} registros")
+                        return materials
+                    else:
+                        error_text = await response.text()
+                        logger.error(f"❌ Error obteniendo materiales desde NocoDB: {response.status} - {error_text}")
+                        return None
+                        
+        except aiohttp.ClientError as e:
+            logger.error(f"🌐 Error de conexión con NocoDB (Materiales): {e}")
+            return None
+        except asyncio.TimeoutError:
+            logger.error("⏰ Timeout en conexión con NocoDB (Materiales)")
+            return None
+        except Exception as e:
+            logger.error(f"❌ Error inesperado en servicio NocoDB (Materiales): {e}")
+            return None
+    
     async def update_contact_status(self, contact_id: int, status: str) -> bool:
         """
         Actualiza el estado de un contacto
