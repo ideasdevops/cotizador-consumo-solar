@@ -218,18 +218,38 @@ async def create_solar_quote(
 ) -> SolarQuoteResponse:
     """Crear cotización solar completa"""
     try:
+        logger.info(f"Iniciando cotización para: {request.client_name or 'Cliente anónimo'}")
+        logger.info(f"Datos recibidos: consumo={request.monthly_consumption_kwh}, área={request.available_area_m2}, ubicación={request.location}")
+        
         # Validar datos de entrada
         if request.monthly_consumption_kwh <= 0:
+            logger.error("Consumo mensual inválido")
             raise HTTPException(status_code=400, detail="El consumo mensual debe ser mayor a 0")
         
         if request.available_area_m2 <= 0:
+            logger.error("Área disponible inválida")
             raise HTTPException(status_code=400, detail="El área disponible debe ser mayor a 0")
+        
+        if not request.location:
+            logger.error("Ubicación no especificada")
+            raise HTTPException(status_code=400, detail="Debe especificar una ubicación")
+        
+        if not request.tariff_type:
+            logger.error("Tipo de tarifa no especificado")
+            raise HTTPException(status_code=400, detail="Debe especificar un tipo de tarifa")
+        
+        if not request.installation_type:
+            logger.error("Tipo de instalación no especificado")
+            raise HTTPException(status_code=400, detail="Debe especificar un tipo de instalación")
         
         # Generar ID único para la cotización
         quote_id = str(uuid.uuid4())
+        logger.info(f"ID de cotización generado: {quote_id}")
         
         # Calcular diseño del sistema
+        logger.info("Iniciando cálculo del sistema...")
         design = solar_calculator.calculate_system_design(request)
+        logger.info(f"Cálculo completado. Potencia: {design.required_power_kwp} kWp")
         
         # Crear respuesta de cotización
         quote_response = SolarQuoteResponse(
@@ -246,14 +266,14 @@ async def create_solar_quote(
         if request.client_email:
             background_tasks.add_task(send_quote_email, quote_response)
         
-        logger.info(f"Cotización creada: {quote_id}")
+        logger.info(f"Cotización creada exitosamente: {quote_id}")
         return quote_response
         
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error creando cotización: {e}")
-        raise HTTPException(status_code=500, detail="Error interno del servidor")
+        logger.error(f"Error creando cotización: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Error interno del servidor: {str(e)}")
 
 
 @router.get("/quote/{quote_id}", response_model=SolarQuoteResponse)
@@ -358,6 +378,44 @@ async def solar_health_check() -> Dict[str, Any]:
             "status": "unhealthy",
             "timestamp": datetime.now(),
             "error": str(e)
+        }
+
+@router.get("/test")
+async def test_solar_calculator() -> Dict[str, Any]:
+    """Endpoint de prueba para el calculador solar"""
+    try:
+        # Crear una solicitud de prueba
+        test_request = SolarQuoteRequest(
+            client_name="Test Cliente",
+            client_email="test@example.com",
+            location="buenos-aires",
+            monthly_consumption_kwh=300,
+            tariff_type="residential",
+            available_area_m2=50,
+            installation_type=InstallationType.TECHO_RESIDENCIAL
+        )
+        
+        # Calcular sistema
+        design = solar_calculator.calculate_system_design(test_request)
+        
+        return {
+            "status": "success",
+            "test_data": {
+                "required_power_kwp": design.required_power_kwp,
+                "panel_count": design.panel_count,
+                "total_investment": design.total_investment,
+                "monthly_savings": design.monthly_savings,
+                "payback_years": design.payback_years
+            },
+            "message": "Calculador solar funcionando correctamente"
+        }
+        
+    except Exception as e:
+        logger.error(f"Error en test del calculador: {e}", exc_info=True)
+        return {
+            "status": "error",
+            "error": str(e),
+            "message": "Error en el calculador solar"
         }
 
 

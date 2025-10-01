@@ -16,23 +16,69 @@ class SolarCalculator {
   }
 
   async init() {
+    console.log('Inicializando calculadora solar...');
     await this.loadMaterials();
     this.setupEventListeners();
     this.setupFormValidation();
+    console.log('Calculadora solar inicializada correctamente');
   }
 
   async loadMaterials() {
     try {
+      console.log('Cargando materiales desde:', `${this.apiBaseUrl}/materials`);
       const response = await fetch(`${this.apiBaseUrl}/materials`);
+      console.log('Respuesta de materiales:', response.status);
+      
       if (response.ok) {
         this.materials = await response.json();
+        console.log('Materiales cargados:', this.materials);
         this.populateMaterialSelects();
       } else {
         console.error('Error cargando materiales:', response.statusText);
+        // Intentar cargar materiales por defecto
+        this.loadDefaultMaterials();
       }
     } catch (error) {
       console.error('Error cargando materiales:', error);
+      // Cargar materiales por defecto en caso de error
+      this.loadDefaultMaterials();
     }
+  }
+
+  loadDefaultMaterials() {
+    console.log('Cargando materiales por defecto...');
+    this.materials = {
+      panels: [
+        {
+          id: "panel_default",
+          brand: "JinkoSolar",
+          model: "JKM400M-54HL4-B",
+          power_watts: 400,
+          price_ars: 180000
+        }
+      ],
+      inverters: [
+        {
+          id: "inverter_default",
+          brand: "SMA",
+          model: "STP 5000TL-20",
+          power_kw: 5.0,
+          price_ars: 800000
+        }
+      ],
+      batteries: [],
+      mounting: [
+        {
+          id: "mounting_default",
+          brand: "Schletter",
+          model: "FS-R",
+          price_per_kw: 150000
+        }
+      ],
+      cables: [],
+      protection: []
+    };
+    this.populateMaterialSelects();
   }
 
   setupEventListeners() {
@@ -170,6 +216,16 @@ class SolarCalculator {
   async calculateSolarSystem() {
     try {
       this.showLoading(true);
+      
+      // Primero probar la conexión con la API
+      console.log('Probando conexión con la API...');
+      const testResponse = await fetch(`${this.apiBaseUrl}/test`);
+      if (!testResponse.ok) {
+        console.error('API no disponible:', testResponse.status);
+        this.showError('El servicio de cálculo no está disponible. Por favor intenta más tarde.');
+        this.showLoading(false);
+        return;
+      }
       
       const formData = this.collectFormData();
       const validation = this.validateFormData(formData);
