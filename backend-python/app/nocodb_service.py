@@ -18,17 +18,17 @@ class NocodbService:
         self.token = settings.NOCODB_TOKEN
         self.base_id = settings.NOCODB_BASE_ID
         
-        # URLs para diferentes tablas
-        self.contactos_table_id = getattr(settings, 'NOCODB_CONTACTOS_TABLE_ID', 'm7i75nx5rkwockg')
-        self.cotizaciones_table_id = getattr(settings, 'NOCODB_COTIZACIONES_TABLE_ID', 'cotizaciones_solares_table_id')
-        self.materiales_table_id = getattr(settings, 'NOCODB_MATERIALES_TABLE_ID', 'materiales_solares_table_id')
-        self.logs_table_id = getattr(settings, 'NOCODB_LOGS_TABLE_ID', 'logs_sistema_table_id')
+        # URLs para diferentes tablas con TABLE_IDs reales
+        self.contactos_table_id = getattr(settings, 'NOCODB_CONTACTOS_TABLE_ID', 'm6snjo5tgkirewb')
+        self.cotizaciones_table_id = getattr(settings, 'NOCODB_COTIZACIONES_TABLE_ID', 'm6rk1j231s70p8m')
+        self.materiales_table_id = getattr(settings, 'NOCODB_MATERIALES_TABLE_ID', 'm2p9ng5e1hn53k0')
+        self.logs_table_id = getattr(settings, 'NOCODB_LOGS_TABLE_ID', 'm1xm2vu3e5bcuiy')
         
-        # URLs de API
-        self.contactos_url = f"{self.base_url}/api/v1/db/data/v1/{self.base_id}/{self.contactos_table_id}"
-        self.cotizaciones_url = f"{self.base_url}/api/v1/db/data/v1/{self.base_id}/{self.cotizaciones_table_id}"
-        self.materiales_url = f"{self.base_url}/api/v1/db/data/v1/{self.base_id}/{self.materiales_table_id}"
-        self.logs_url = f"{self.base_url}/api/v1/db/data/v1/{self.base_id}/{self.logs_table_id}"
+        # URLs de API v2
+        self.contactos_url = f"{self.base_url}/api/v2/tables/{self.contactos_table_id}/records"
+        self.cotizaciones_url = f"{self.base_url}/api/v2/tables/{self.cotizaciones_table_id}/records"
+        self.materiales_url = f"{self.base_url}/api/v2/tables/{self.materiales_table_id}/records"
+        self.logs_url = f"{self.base_url}/api/v2/tables/{self.logs_table_id}/records"
         
         self.headers = {
             "xc-token": self.token,
