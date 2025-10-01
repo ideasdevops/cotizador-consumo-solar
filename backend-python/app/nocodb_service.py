@@ -6,7 +6,7 @@ Guarda los datos de los clientes y cotizaciones en la base de datos
 import aiohttp
 import asyncio
 import logging
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 from datetime import datetime
 from .config import settings
 
