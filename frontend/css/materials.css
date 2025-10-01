@@ -1,0 +1,266 @@
+/* Estilos para la sección de Materiales */
+
+.materials {
+  background: #f9fafb;
+  padding: 4rem 0;
+}
+
+.materials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.material-category {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.material-category:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.category-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.category-header h3 {
+  color: #1f2937;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.category-header h3 i {
+  color: #f97316;
+  font-size: 1.1rem;
+}
+
+.category-header p {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.materials-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.material-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.material-item:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.material-info {
+  flex: 1;
+}
+
+.material-info h4 {
+  color: #1f2937;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.material-info p {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.material-specs {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.material-specs span {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+}
+
+.material-specs i {
+  color: #f97316;
+  font-size: 0.75rem;
+}
+
+.material-price {
+  text-align: right;
+  margin-left: 1rem;
+}
+
+.material-price .price {
+  display: block;
+  color: #1f2937;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.material-price small {
+  color: #6b7280;
+  font-size: 0.75rem;
+}
+
+/* Footer de materiales */
+.materials-footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.materials-info {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.materials-info h3 {
+  color: #1f2937;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.materials-info h3 i {
+  color: #10b981;
+}
+
+.materials-info ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.materials-info li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.materials-info li i {
+  color: #10b981;
+  font-size: 0.875rem;
+}
+
+.materials-cta {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: white;
+  padding: 2rem;
+  border-radius: 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.materials-cta h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.materials-cta p {
+  opacity: 0.9;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.materials-cta .btn {
+  align-self: center;
+  background: white;
+  color: #f97316;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.materials-cta .btn:hover {
+  background: #f9fafb;
+  transform: translateY(-1px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .materials-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .material-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .material-price {
+    margin-left: 0;
+    text-align: left;
+    width: 100%;
+  }
+  
+  .materials-footer {
+    grid-template-columns: 1fr;
+  }
+  
+  .material-specs {
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .materials {
+    padding: 2rem 0;
+  }
+  
+  .material-category {
+    padding: 1rem;
+  }
+  
+  .materials-info,
+  .materials-cta {
+    padding: 1.5rem;
+  }
+}
