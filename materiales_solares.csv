@@ -1,0 +1,13 @@
+tipo_material,marca,modelo,potencia_watts,potencia_kw,precio_ars,precio_por_kw,stock_disponible,activo,especificaciones_tecnicas,garantia_anos,proveedor,fecha_actualizacion
+panel,JinkoSolar,JKM400M-54HL4-B,400,0.4,180000,450000,50,true,Panel monocristalino de alta eficiencia,25,JinkoSolar Argentina,2025-01-15 10:00:00
+panel,Trina Solar,TSM-400DE14A(II),400,0.4,175000,437500,45,true,Panel monocristalino con tecnología PERC,25,Trina Solar Argentina,2025-01-15 10:00:00
+panel,LG Solar,LG400N2W-A5,400,0.4,195000,487500,30,true,Panel monocristalino con tecnología NeON,25,LG Electronics,2025-01-15 10:00:00
+inversor,SMA,STP 5000TL-20,5000,5.0,800000,160000,25,true,Inversor string de 5kW,10,SMA Argentina,2025-01-15 10:00:00
+inversor,Fronius,Primo 5.0-1,5000,5.0,750000,150000,30,true,Inversor string de 5kW con WiFi,10,Fronius Argentina,2025-01-15 10:00:00
+inversor,Huawei,SUN2000-5KTL-L1,5000,5.0,700000,140000,35,true,Inversor string de 5kW inteligente,10,Huawei Argentina,2025-01-15 10:00:00
+bateria,Tesla,Powerwall 2,13500,13.5,4500000,333333,15,true,Batería de litio de 13.5kWh,10,Tesla Argentina,2025-01-15 10:00:00
+bateria,LG Chem,RESU10H,9600,9.6,3200000,333333,20,true,Batería de litio de 9.6kWh,10,LG Chem Argentina,2025-01-15 10:00:00
+montaje,Schletter,FS-R,0,0,150000,150000,100,true,Sistema de montaje para techo inclinado,20,Schletter Argentina,2025-01-15 10:00:00
+montaje,K2 Systems,K2 Solar Mount,0,0,140000,140000,80,true,Sistema de montaje universal,20,K2 Systems Argentina,2025-01-15 10:00:00
+cable,Helukabel,Solar Cable 4mm2,0,0,25000,0,500,true,Cable solar 4mm2 DC,10,Helukabel Argentina,2025-01-15 10:00:00
+proteccion,ABB,OVR 1P 25A,0,0,45000,0,200,true,Protector contra sobretensiones,5,ABB Argentina,2025-01-15 10:00:00

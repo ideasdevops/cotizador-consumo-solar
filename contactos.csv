@@ -1,0 +1,6 @@
+nombre_cliente,email_cliente,telefono_cliente,mensaje_consulta,fecha_consulta,estado_consulta,origen_consulta,notas_internas,fecha_respuesta,usuario_respuesta
+Juan Pérez,juan.perez@email.com,+54 9 261 1234567,Quiero información sobre paneles solares para mi casa,2025-01-15 10:30:00,Nuevo,Web Solar,,,
+María González,maria.gonzalez@email.com,+54 9 261 2345678,Necesito una cotización para sistema de 5kW,2025-01-15 11:45:00,Nuevo,Web Solar,,,
+Carlos López,carlos.lopez@email.com,+54 9 261 3456789,Consulta sobre financiamiento disponible,2025-01-15 14:20:00,Nuevo,Web Solar,,,
+Ana Martínez,ana.martinez@email.com,+54 9 261 4567890,¿Cuánto tiempo tarda la instalación?,2025-01-15 16:10:00,Nuevo,Web Solar,,,
+Luis Rodríguez,luis.rodriguez@email.com,+54 9 261 5678901,Quiero saber sobre garantías del sistema,2025-01-15 17:30:00,Nuevo,Web Solar,,,

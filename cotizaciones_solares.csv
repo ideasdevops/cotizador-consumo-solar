@@ -1,0 +1,6 @@
+nombre_cliente,email_cliente,ubicacion_proyecto,consumo_mensual_kwh,tipo_tarifa,area_disponible_m2,tipo_instalacion,potencia_requerida_kwp,cantidad_paneles,generacion_mensual_kwh,ahorro_mensual_ars,inversion_total_ars,retorno_inversion_anos,estado_cotizacion,fecha_creacion,valida_hasta,notas_proyecto
+Juan Pérez,juan.perez@email.com,Buenos Aires,350,residential,45,techo_residencial,4.2,11,525,45000,2800000,5.2,Nueva,2025-01-15 10:30:00,2025-02-14 10:30:00,Sistema para casa familiar
+María González,maria.gonzalez@email.com,Córdoba,280,residential,35,techo_residencial,3.5,9,420,36000,2200000,4.8,Nueva,2025-01-15 11:45:00,2025-02-14 11:45:00,Instalación en techo de tejas
+Carlos López,carlos.lopez@email.com,Mendoza,450,commercial,60,techo_comercial,5.5,14,675,58000,3500000,4.5,Nueva,2025-01-15 14:20:00,2025-02-14 14:20:00,Sistema para oficina
+Ana Martínez,ana.martinez@email.com,Rosario,320,residential,40,techo_residencial,3.8,10,480,41000,2400000,4.9,Nueva,2025-01-15 16:10:00,2025-02-14 16:10:00,Casa con orientación sur
+Luis Rodríguez,luis.rodriguez@email.com,La Plata,400,residential,50,techo_residencial,4.8,12,600,52000,3000000,4.8,Nueva,2025-01-15 17:30:00,2025-02-14 17:30:00,Sistema con baterías

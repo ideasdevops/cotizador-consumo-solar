@@ -1,0 +1,6 @@
+tipo_evento,mensaje,nivel_log,usuario,ip_cliente,fecha_hora,datos_adicionales
+cotizacion_generada,Cotización solar generada para Juan Pérez,INFO,sistema,192.168.1.100,2025-01-15 10:30:00,"{""cliente"":""Juan Pérez"",""potencia"":4.2}"
+contacto_recibido,Nuevo formulario de contacto recibido,INFO,sistema,192.168.1.101,2025-01-15 11:45:00,"{""nombre"":""María González"",""email"":""maria@email.com""}"
+error_calculo,Error en cálculo de sistema solar,ERROR,sistema,192.168.1.102,2025-01-15 14:20:00,"{""error"":""Datos insuficientes"",""ubicacion"":""Mendoza""}"
+email_enviado,Email de cotización enviado exitosamente,INFO,sistema,192.168.1.103,2025-01-15 16:10:00,"{""destinatario"":""ana@email.com"",""tipo"":""cotizacion""}"
+material_actualizado,Material actualizado en base de datos,INFO,admin,192.168.1.104,2025-01-15 17:30:00,"{""material"":""Panel JinkoSolar"",""precio_nuevo"":180000}"
