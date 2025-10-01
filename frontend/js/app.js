@@ -1,330 +1,138 @@
-/**
- * Cotizador de Construcción - Aplicación Principal
- * Maneja la inicialización y funcionalidades generales de la aplicación
- */
-
-class ConstructionApp {
+// App principal para el Cotizador de Consumo Solar
+class SolarCalculator {
   constructor() {
-    this.currentQuote = null;
-    this.materials = [];
-    this.constructionTypes = [];
-    this.finishLevels = [];
-    this.usageTypes = [];
-    this.regions = [];
+    this.prices = {
+      panelCost: 150000, // Costo por panel en ARS
+      inverterCost: 800000, // Costo por kW de inversor
+      installationCost: 200000, // Costo de instalación por kWp
+      panelPower: 0.5, // Potencia por panel en kWp
+      efficiency: 0.85, // Eficiencia del sistema
+      sunHours: 5.5, // Horas de sol promedio por día
+      tariffRate: {
+        residential: 45, // ARS por kWh
+        commercial: 38,
+        industrial: 32
+      }
+    };
     
     this.init();
   }
 
-  /**
-   * Inicializa la aplicación
-   */
-  async init() {
-    try {
-      console.log('🚀 Iniciando Cotizador de Construcción...');
-      
-      // Cargar datos iniciales
-      await this.loadInitialData();
-      
-      // Inicializar componentes
-      this.initNavigation();
-      this.initHeroPreview();
-      this.initTypeCards();
-      this.initScrollEffects();
-      this.initContactForm();
-      
-      // Mostrar notificación de bienvenida
-      this.showNotification('¡Bienvenido al Cotizador de Construcción!', 'info');
-      
-      console.log('✅ Aplicación inicializada correctamente');
-    } catch (error) {
-      console.error('❌ Error inicializando la aplicación:', error);
-      this.showNotification('Error al cargar la aplicación', 'error');
-    }
+  init() {
+    this.setupEventListeners();
+    this.updateLastUpdateTime();
+    this.loadSavedData();
   }
 
-  /**
-   * Carga los datos iniciales de la aplicación
-   */
-  async loadInitialData() {
-    try {
-      // Datos hardcodeados para evitar errores de API
-      this.constructionTypes = [
-        { id: 'steel_frame', nombre: 'Steel Frame', descripcion: 'Construcción en seco con perfiles de acero' },
-        { id: 'industrial', nombre: 'Industrial', descripcion: 'Estructuras con hierros estructurales' },
-        { id: 'contenedor', nombre: 'Contenedor Marítimo', descripcion: 'Módulos con contenedores marítimos' },
-        { id: 'mixto', nombre: 'Sistema Mixto', descripcion: 'Combinación de diferentes sistemas' }
-      ];
-      
-      this.finishLevels = [
-        { id: 'basico', nombre: 'Básico', multiplicador: 1.0 },
-        { id: 'estandar', nombre: 'Estándar', multiplicador: 1.2 },
-        { id: 'premium', nombre: 'Premium', multiplicador: 1.5 }
-      ];
-      
-      this.usageTypes = [
-        { id: 'residencial', nombre: 'Residencial', multiplicador: 1.0 },
-        { id: 'comercial', nombre: 'Comercial', multiplicador: 1.3 },
-        { id: 'industrial', nombre: 'Industrial', multiplicador: 1.4 }
-      ];
-      
-      this.materials = [];
-      this.regions = { 'mendoza': 1.0, 'buenos_aires': 1.2, 'otras': 1.1 };
-      
-      console.log('📊 Datos iniciales cargados (hardcodeados):', {
-        constructionTypes: this.constructionTypes.length,
-        finishLevels: this.finishLevels.length,
-        usageTypes: this.usageTypes.length,
-        materials: this.materials.length,
-        regions: Object.keys(this.regions).length
-      });
-      
-    } catch (error) {
-      console.error('❌ Error cargando datos iniciales:', error);
-      // No lanzar error para evitar que se muestre la notificación de error
-    }
-  }
-
-  /**
-   * Inicializa la navegación móvil
-   */
-  initNavigation() {
-    const navToggle = document.querySelector('.nav-toggle');
-    const navMenu = document.querySelector('.nav-menu');
-    
-    if (navToggle && navMenu) {
-      navToggle.addEventListener('click', () => {
-        navToggle.classList.toggle('active');
-        navMenu.classList.toggle('active');
-      });
-      
-      // Cerrar menú al hacer clic en un enlace
-      const navLinks = navMenu.querySelectorAll('a');
-      navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-          navToggle.classList.remove('active');
-          navMenu.classList.remove('active');
-        });
-      });
-    }
-    
-    // Navegación suave para enlaces internos
-    const internalLinks = document.querySelectorAll('a[href^="#"]');
-    internalLinks.forEach(link => {
-      link.addEventListener('click', (e) => {
+  setupEventListeners() {
+    // Smooth scrolling para navegación
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', (e) => {
         e.preventDefault();
-        const targetId = link.getAttribute('href');
-        const targetElement = document.querySelector(targetId);
-        
-        if (targetElement) {
-          targetElement.scrollIntoView({
+        const target = document.querySelector(anchor.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
             behavior: 'smooth',
             block: 'start'
           });
         }
       });
     });
-  }
 
-  /**
-   * Inicializa la vista previa del hero
-   */
-  initHeroPreview() {
-    const previewItems = document.querySelectorAll('.preview-item');
-    
-    previewItems.forEach(item => {
-      item.addEventListener('click', () => {
-        // Remover clase active de todos los items
-        previewItems.forEach(i => i.classList.remove('active'));
-        
-        // Agregar clase active al item clickeado
-        item.classList.add('active');
-        
-        // Obtener el tipo de construcción
-        const constructionType = item.dataset.type;
-        
-        // Actualizar información del hero
-        this.updateHeroInfo(constructionType);
-      });
-    });
-  }
-
-  /**
-   * Actualiza la información del hero según el tipo de construcción seleccionado
-   */
-  updateHeroInfo(constructionType) {
-    const heroText = document.querySelector('.hero-text h2');
-    const heroDescription = document.querySelector('.hero-text p');
-    
-    const typeInfo = {
-      'steel-frame': {
-        title: 'Steel Frame - Construcción Moderna',
-        description: 'Sistema constructivo en seco con perfiles de acero galvanizado. Ideal para viviendas residenciales con excelente aislamiento térmico y acústico.'
-      },
-      'industrial': {
-        title: 'Industrial - Estructuras Robustas',
-        description: 'Construcciones industriales con hierros estructurales y metales. Perfecto para naves industriales, galpones y espacios de trabajo.'
-      },
-      'contenedor': {
-        title: 'Contenedores - Solución Económica',
-        description: 'Conversión de contenedores marítimos en módulos habitables. Solución económica, portátil y rápida para diversos usos.'
-      }
-    };
-    
-    if (typeInfo[constructionType]) {
-      heroText.textContent = typeInfo[constructionType].title;
-      heroDescription.textContent = typeInfo[constructionType].description;
-      
-      // Agregar animación
-      heroText.classList.add('fade-in');
-      heroDescription.classList.add('fade-in');
-      
-      setTimeout(() => {
-        heroText.classList.remove('fade-in');
-        heroDescription.classList.remove('fade-in');
-      }, 500);
-    }
-  }
-
-  /**
-   * Inicializa las tarjetas de tipos de construcción
-   */
-  initTypeCards() {
-    const typeCards = document.querySelectorAll('.type-card');
-    
-    typeCards.forEach(card => {
-      card.addEventListener('click', () => {
-        // Scroll suave a la sección de cotización
-        const quoteSection = document.querySelector('#cotizador');
-        if (quoteSection) {
-          quoteSection.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-        }
-        
-        // Seleccionar automáticamente el tipo en el formulario
-        const constructionType = card.dataset.type;
-        const typeSelect = document.querySelector('#tipo_construccion');
-        if (typeSelect) {
-          typeSelect.value = constructionType;
-          
-          // Disparar evento change para actualizar el formulario
-          typeSelect.dispatchEvent(new Event('change'));
-        }
-        
-        // Mostrar notificación
-        this.showNotification(`Tipo de construcción seleccionado: ${constructionType}`, 'success');
-      });
-    });
-  }
-
-  /**
-   * Inicializa efectos de scroll
-   */
-  initScrollEffects() {
-    // Efecto de aparición en scroll
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    };
-    
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('fade-in');
-        }
-      });
-    }, observerOptions);
-    
-    // Observar elementos para animación
-    const animatedElements = document.querySelectorAll('.type-card, .material-card, .form-section');
-    animatedElements.forEach(el => observer.observe(el));
-    
-    // Efecto de navbar en scroll
-    let lastScrollTop = 0;
-    const navbar = document.querySelector('.navbar');
-    
-    window.addEventListener('scroll', () => {
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      
-      if (scrollTop > lastScrollTop && scrollTop > 100) {
-        // Scroll hacia abajo
-        navbar.style.transform = 'translateY(-100%)';
-      } else {
-        // Scroll hacia arriba
-        navbar.style.transform = 'translateY(0)';
-      }
-      
-      lastScrollTop = scrollTop;
-    });
-  }
-
-  /**
-   * Inicializa el formulario de contacto
-   */
-  initContactForm() {
-    const contactForm = document.querySelector('#contactForm');
-    
+    // Formulario de contacto
+    const contactForm = document.getElementById('contactForm');
     if (contactForm) {
-      contactForm.addEventListener('submit', async (e) => {
+      contactForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        
-        const formData = new FormData(contactForm);
-        const contactData = {
-          name: formData.get('name'),
-          email: formData.get('email'),
-          message: formData.get('message')
-        };
-        
-        try {
-          // Simular envío de formulario
-          await new Promise(resolve => setTimeout(resolve, 1000));
-          
-          // Mostrar notificación de éxito
-          this.showNotification('Mensaje enviado correctamente', 'success');
-          
-          // Limpiar formulario
-          contactForm.reset();
-          
-        } catch (error) {
-          console.error('Error enviando mensaje:', error);
-          this.showNotification('Error al enviar el mensaje', 'error');
-        }
+        this.handleContactForm(e);
+      });
+    }
+
+    // Actualización de precios
+    const updateButton = document.querySelector('.btn-ghost');
+    if (updateButton) {
+      updateButton.addEventListener('click', () => {
+        this.updatePrices();
       });
     }
   }
 
-  /**
-   * Muestra una notificación
-   */
-  showNotification(message, type = 'info') {
-    // Crear elemento de notificación
-    const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
-    notification.textContent = message;
-    
-    // Agregar al DOM
-    document.body.appendChild(notification);
-    
-    // Mostrar notificación
-    setTimeout(() => {
-      notification.classList.add('show');
-    }, 100);
-    
-    // Ocultar y remover después de 5 segundos
-    setTimeout(() => {
-      notification.classList.remove('show');
-      setTimeout(() => {
-        if (notification.parentNode) {
-          notification.parentNode.removeChild(notification);
-        }
-      }, 300);
-    }, 5000);
+  calculateSolarSystem() {
+    const monthlyConsumption = parseFloat(document.getElementById('monthlyConsumption').value);
+    const tariffType = document.getElementById('tariffType').value;
+    const location = document.getElementById('location').value;
+
+    if (!monthlyConsumption || monthlyConsumption <= 0) {
+      this.showError('Por favor ingresa un consumo mensual válido');
+      return;
+    }
+
+    // Cálculos del sistema solar
+    const dailyConsumption = monthlyConsumption / 30;
+    const requiredPower = dailyConsumption / (this.prices.sunHours * this.prices.efficiency);
+    const panelsCount = Math.ceil(requiredPower / this.prices.panelPower);
+    const inverterSize = Math.ceil(requiredPower * 1.2); // 20% de margen
+    const systemPower = panelsCount * this.prices.panelPower;
+
+    // Cálculos económicos
+    const panelCost = panelsCount * this.prices.panelCost;
+    const inverterCost = inverterSize * this.prices.inverterCost;
+    const installationCost = systemPower * this.prices.installationCost;
+    const totalInvestment = panelCost + inverterCost + installationCost;
+
+    const monthlySavings = monthlyConsumption * this.prices.tariffRate[tariffType];
+    const annualSavings = monthlySavings * 12;
+    const paybackYears = totalInvestment / annualSavings;
+
+    // Mostrar resultados
+    this.displayResults({
+      requiredPower: systemPower.toFixed(1),
+      panelsCount: panelsCount,
+      inverterSize: inverterSize.toFixed(1),
+      monthlySavings: this.formatCurrency(monthlySavings),
+      investment: this.formatCurrency(totalInvestment),
+      payback: paybackYears.toFixed(1)
+    });
+
+    // Guardar datos
+    this.saveCalculation({
+      monthlyConsumption,
+      tariffType,
+      location,
+      results: {
+        requiredPower: systemPower,
+        panelsCount,
+        inverterSize,
+        monthlySavings,
+        investment: totalInvestment,
+        paybackYears
+      }
+    });
   }
 
-  /**
-   * Formatea un número como moneda argentina
-   */
+  displayResults(results) {
+    const resultsContainer = document.getElementById('results');
+    if (!resultsContainer) return;
+
+    // Actualizar valores
+    document.getElementById('requiredPower').textContent = results.requiredPower + ' kWp';
+    document.getElementById('panelsCount').textContent = results.panelsCount + ' unidades';
+    document.getElementById('inverterSize').textContent = results.inverterSize + ' kW';
+    document.getElementById('monthlySavings').textContent = results.monthlySavings;
+    document.getElementById('investment').textContent = results.investment;
+    document.getElementById('payback').textContent = results.payback + ' años';
+
+    // Mostrar resultados con animación
+    resultsContainer.style.display = 'block';
+    resultsContainer.classList.add('animate-fade-in');
+
+    // Scroll a resultados
+    resultsContainer.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+  }
+
   formatCurrency(amount) {
     return new Intl.NumberFormat('es-AR', {
       style: 'currency',
@@ -334,107 +142,199 @@ class ConstructionApp {
     }).format(amount);
   }
 
-  /**
-   * Formatea un número con separadores de miles
-   */
-  formatNumber(number) {
-    return new Intl.NumberFormat('es-AR').format(number);
+  showError(message) {
+    // Crear notificación de error
+    const notification = document.createElement('div');
+    notification.className = 'notification error';
+    notification.innerHTML = `
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18Z" stroke="currentColor" stroke-width="2"/>
+        <path d="M10 6V10M10 14H10.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      ${message}
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Remover después de 5 segundos
+    setTimeout(() => {
+      notification.remove();
+    }, 5000);
   }
 
-  /**
-   * Valida un email
-   */
-  validateEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+  showSuccess(message) {
+    // Crear notificación de éxito
+    const notification = document.createElement('div');
+    notification.className = 'notification success';
+    notification.innerHTML = `
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18Z" stroke="currentColor" stroke-width="2"/>
+        <path d="M6 10L8.5 12.5L14 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      ${message}
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Remover después de 5 segundos
+    setTimeout(() => {
+      notification.remove();
+    }, 5000);
   }
 
-  /**
-   * Valida un teléfono
-   */
-  validatePhone(phone) {
-    const phoneRegex = /^[\+]?[0-9\s\-\(\)]{10,}$/;
-    return phoneRegex.test(phone);
-  }
+  async handleContactForm(e) {
+    const formData = new FormData(e.target);
+    const data = {
+      name: formData.get('name') || document.getElementById('name').value,
+      email: formData.get('email') || document.getElementById('email').value,
+      phone: formData.get('phone') || document.getElementById('phone').value,
+      message: formData.get('message') || document.getElementById('message').value
+    };
 
-  /**
-   * Obtiene el multiplicador regional para una provincia
-   */
-  getRegionalMultiplier(provincia) {
-    const normalizedProvince = provincia.toLowerCase().replace(/\s+/g, '_');
-    return this.regions[normalizedProvince] || 1.0;
-  }
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
 
-  /**
-   * Obtiene información de un tipo de construcción
-   */
-  getConstructionTypeInfo(type) {
-    return this.constructionTypes.tipos?.find(t => t.id === type) || null;
-  }
-
-  /**
-   * Obtiene información de un nivel de terminación
-   */
-  getFinishLevelInfo(level) {
-    return this.finishLevels.niveles?.find(n => n.id === level) || null;
-  }
-
-  /**
-   * Obtiene información de un tipo de uso
-   */
-  getUsageTypeInfo(usage) {
-    return this.usageTypes.tipos?.find(t => t.id === usage) || null;
-  }
-
-  /**
-   * Obtiene materiales por categoría
-   */
-  getMaterialsByCategory(category) {
-    if (category === 'todos') {
-      return this.materials;
-    }
-    return this.materials.filter(material => material.categoria === category);
-  }
-
-  /**
-   * Actualiza el estado de carga de un elemento
-   */
-  setLoadingState(element, isLoading) {
-    if (isLoading) {
-      element.classList.add('loading');
-      element.disabled = true;
-    } else {
-      element.classList.remove('loading');
-      element.disabled = false;
+      if (response.ok) {
+        this.showSuccess('¡Consulta enviada exitosamente! Te contactaremos pronto.');
+        e.target.reset();
+      } else {
+        throw new Error('Error al enviar la consulta');
+      }
+    } catch (error) {
+      this.showError('Error al enviar la consulta. Por favor intenta nuevamente.');
+      console.error('Error:', error);
     }
   }
 
-  /**
-   * Maneja errores de la aplicación
-   */
-  handleError(error, context = '') {
-    console.error(`❌ Error en ${context}:`, error);
-    
-    let userMessage = 'Ha ocurrido un error inesperado';
-    
-    if (error.response) {
-      // Error de respuesta HTTP
-      userMessage = error.response.data?.error || userMessage;
-    } else if (error.message) {
-      // Error de JavaScript
-      userMessage = error.message;
+  async updatePrices() {
+    try {
+      const response = await fetch('/api/update-prices', {
+        method: 'POST'
+      });
+
+      if (response.ok) {
+        this.showSuccess('Precios actualizados exitosamente');
+        this.updateLastUpdateTime();
+      } else {
+        throw new Error('Error al actualizar precios');
+      }
+    } catch (error) {
+      this.showError('Error al actualizar precios. Usando precios en caché.');
+      console.error('Error:', error);
     }
-    
-    this.showNotification(userMessage, 'error');
+  }
+
+  updateLastUpdateTime() {
+    const lastUpdateElement = document.getElementById('lastUpdate');
+    if (lastUpdateElement) {
+      lastUpdateElement.textContent = 'hace un momento';
+    }
+  }
+
+  saveCalculation(data) {
+    try {
+      localStorage.setItem('lastSolarCalculation', JSON.stringify(data));
+    } catch (error) {
+      console.error('Error al guardar cálculo:', error);
+    }
+  }
+
+  loadSavedData() {
+    try {
+      const savedData = localStorage.getItem('lastSolarCalculation');
+      if (savedData) {
+        const data = JSON.parse(savedData);
+        document.getElementById('monthlyConsumption').value = data.monthlyConsumption || '';
+        document.getElementById('tariffType').value = data.tariffType || 'residential';
+        document.getElementById('location').value = data.location || 'buenos-aires';
+      }
+    } catch (error) {
+      console.error('Error al cargar datos guardados:', error);
+    }
+  }
+}
+
+// Funciones globales para compatibilidad con HTML
+function scrollToSection(sectionId) {
+  const section = document.getElementById(sectionId);
+  if (section) {
+    section.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+  }
+}
+
+function calculateSolarSystem() {
+  if (window.solarCalculator) {
+    window.solarCalculator.calculateSolarSystem();
+  }
+}
+
+function updatePrices() {
+  if (window.solarCalculator) {
+    window.solarCalculator.updatePrices();
   }
 }
 
 // Inicializar la aplicación cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
-  window.app = new ConstructionApp();
+  window.solarCalculator = new SolarCalculator();
+  
+  // Agregar estilos para notificaciones
+  const style = document.createElement('style');
+  style.textContent = `
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 16px 20px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 500;
+      z-index: 1000;
+      animation: slideIn 0.3s ease-out;
+      max-width: 400px;
+    }
+    
+    .notification.success {
+      background: #10B981;
+      color: white;
+    }
+    
+    .notification.error {
+      background: #EF4444;
+      color: white;
+    }
+    
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+  `;
+  document.head.appendChild(style);
 });
 
-// Exportar para uso en otros módulos
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = ConstructionApp;
-}
+// Manejar errores globales
+window.addEventListener('error', (e) => {
+  console.error('Error global:', e.error);
+});
+
+// Manejar errores de promesas no capturadas
+window.addEventListener('unhandledrejection', (e) => {
+  console.error('Promesa rechazada:', e.reason);
+});
