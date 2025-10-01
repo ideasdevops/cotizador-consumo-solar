@@ -1,0 +1,38 @@
+{
+    "app_name": "cotizador-solar",
+    "version": "1.0.0",
+    "description": "Cotizador de Consumo Solar - Sumpetrol SA",
+    "company": "Sumpetrol SA",
+    "deploy_system": "deploy-system-for-easypanel",
+    "architecture": {
+        "frontend": "HTML/CSS/JavaScript",
+        "backend_python": "FastAPI + Uvicorn",
+        "backend_node": "Node.js + Express",
+        "database": "NocoDB",
+        "email": "SMTP",
+        "apis": "Argentina APIs (INDEC, BCRA)"
+    },
+    "services": {
+        "nginx": {
+            "port": 80,
+            "role": "Reverse proxy y servidor estático"
+        },
+        "python_backend": {
+            "port": 8000,
+            "role": "API principal con FastAPI"
+        },
+        "node_backend": {
+            "port": 8005,
+            "role": "Servicios adicionales"
+        }
+    },
+    "features": [
+        "Cotización de sistemas solares",
+        "Cálculo de consumo energético",
+        "Integración con APIs de Argentina",
+        "Generación de PDFs",
+        "Envío de emails",
+        "Base de datos NocoDB",
+        "Actualización automática de precios"
+    ]
+}

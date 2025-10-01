@@ -1,0 +1,328 @@
+# ===============================================
+# DOCKERIGNORE - COTIZADOR SOLAR
+# ===============================================
+# Archivos y directorios a ignorar en el build de Docker
+# ===============================================
+
+# Archivos de Git
+.git
+.gitignore
+.gitattributes
+
+# Archivos de configuración local
+.env
+.env.local
+.env.development
+.env.production
+*.local
+
+# Archivos de logs
+*.log
+logs/
+log/
+
+# Archivos temporales
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Archivos de cache
+*.cache
+cache/
+.cache/
+node_modules/.cache/
+
+# Archivos de backup
+*.bak
+*.backup
+backup/
+backups/
+
+# Archivos de desarrollo
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+*.pid
+*.sock
+
+# Archivos de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Archivos de Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn-integrity
+
+# Archivos de testing
+.coverage
+.pytest_cache/
+.tox/
+.nox/
+coverage/
+htmlcov/
+.nyc_output
+
+# Archivos de documentación
+docs/
+*.md
+README*
+LICENSE*
+
+# Archivos de deploy
+deploy-templates/
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+
+# Archivos de configuración específicos
+nginx.conf
+supervisord.conf
+
+# Archivos de datos
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# Archivos de certificados
+*.pem
+*.key
+*.crt
+*.cert
+
+# Archivos de configuración de IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Archivos de configuración de OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Archivos de configuración de editor
+*~
+*.swp
+*.swo
+*.orig
+
+# Archivos de configuración de versionado
+.svn/
+.hg/
+.bzr/
+
+# Archivos de configuración de CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+.circleci/
+
+# Archivos de configuración de monitoreo
+.monitoring/
+monitoring/
+
+# Archivos de configuración de seguridad
+.secrets/
+secrets/
+*.secret
+
+# Archivos de configuración de performance
+.profiling/
+profiling/
+
+# Archivos de configuración de análisis
+.analysis/
+analysis/
+
+# Archivos de configuración de métricas
+.metrics/
+metrics/
+
+# Archivos de configuración de alertas
+.alerts/
+alerts/
+
+# Archivos de configuración de notificaciones
+.notifications/
+notifications/
+
+# Archivos de configuración de webhooks
+.webhooks/
+webhooks/
+
+# Archivos de configuración de APIs
+.api/
+api/
+
+# Archivos de configuración de servicios
+.services/
+services/
+
+# Archivos de configuración de bases de datos
+.database/
+database/
+
+# Archivos de configuración de cache
+.cache/
+cache/
+
+# Archivos de configuración de sesiones
+.sessions/
+sessions/
+
+# Archivos de configuración de usuarios
+.users/
+users/
+
+# Archivos de configuración de permisos
+.permissions/
+permissions/
+
+# Archivos de configuración de roles
+.roles/
+roles/
+
+# Archivos de configuración de autenticación
+.auth/
+auth/
+
+# Archivos de configuración de autorización
+.authorization/
+authorization/
+
+# Archivos de configuración de tokens
+.tokens/
+tokens/
+
+# Archivos de configuración de claves
+.keys/
+keys/
+
+# Archivos de configuración de certificados
+.certificates/
+certificates/
+
+# Archivos de configuración de SSL
+.ssl/
+ssl/
+
+# Archivos de configuración de TLS
+.tls/
+tls/
+
+# Archivos de configuración de HTTPS
+.https/
+https/
+
+# Archivos de configuración de HTTP
+.http/
+http/
+
+# Archivos de configuración de FTP
+.ftp/
+ftp/
+
+# Archivos de configuración de SFTP
+.sftp/
+sftp/
+
+# Archivos de configuración de SSH
+.ssh/
+ssh/
+
+# Archivos de configuración de SCP
+.scp/
+scp/
+
+# Archivos de configuración de RSYNC
+.rsync/
+rsync/
+
+# Archivos de configuración de S3
+.s3/
+s3/
+
+# Archivos de configuración de Azure
+.azure/
+azure/
+
+# Archivos de configuración de GCP
+.gcp/
+gcp/
+
+# Archivos de configuración de AWS
+.aws/
+aws/
+
+# Archivos de configuración de DigitalOcean
+.digitalocean/
+digitalocean/
+
+# Archivos de configuración de Linode
+.linode/
+linode/
+
+# Archivos de configuración de Vultr
+.vultr/
+vultr/
+
+# Archivos de configuración de Heroku
+.heroku/
+heroku/
+
+# Archivos de configuración de Netlify
+.netlify/
+netlify/
+
+# Archivos de configuración de Vercel
+.vercel/
+vercel/
+
+# Archivos de configuración de Railway
+.railway/
+railway/
+
+# Archivos de configuración de Render
+.render/
+render/
+
+# Archivos de configuración de Fly
+.fly/
+fly/
+
+# Archivos de configuración de Easypanel
+.easypanel/
+easypanel/
