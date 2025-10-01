@@ -15,6 +15,7 @@ from .solar_models import (
 )
 from .solar_calculator import SolarCalculator
 from .solar_materials_service import SolarMaterialsService
+from .nocodb_service import nocodb_service
 
 logger = logging.getLogger(__name__)
 
