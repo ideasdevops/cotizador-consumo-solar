@@ -17,8 +17,9 @@ class SolarMaterialsService:
     """Servicio para gestión de materiales solares desde NocoDB"""
     
     def __init__(self):
-        self.nocodb_url = settings.NOCODB_URL
-        self.nocodb_token = settings.NOCODB_TOKEN
+        # Usar variables correctas de NocoDB
+        self.nocodb_url = getattr(settings, 'NC_DB_URL', settings.NOCODB_URL)
+        self.nocodb_token = getattr(settings, 'NC_TOKEN', settings.NOCODB_TOKEN)
         self.materiales_table_id = getattr(settings, 'NOCODB_MATERIALES_TABLE_ID', 'm2p9ng5e1hn53k0')
         self.materials_url = f"{self.nocodb_url}/api/v2/tables/{self.materiales_table_id}/records"
         

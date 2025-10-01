@@ -19,11 +19,22 @@ class Settings(BaseSettings):
     # Email de recepción de consultas
     CONTACT_EMAIL: str = "marketing@sumpetrol.com.ar"
     
-    # Configuración de Nocodb
-    NOCODB_URL: str = "https://bots-nocodb.prskfv.easypanel.host"
-    NOCODB_TOKEN: str = "JvshcwW9JUK_sR4yT7H5r7ygSA2BPFAGNI8nSeWF"
+    # Configuración de Nocodb - Variables correctas
+    NC_DB_URL: str = "https://own-devops-nocodb.2lzju7.easypanel.host"
+    NC_TOKEN: str = "_H3KGTFKGtgMb3pQU5GXR2i17glb1ytl3hxYvVkT"
+    NC_DB_ID: str = "pjo0a1kfnvm1ai3"
+    
+    # Variables legacy para compatibilidad
+    NOCODB_URL: str = "https://own-devops-nocodb.2lzju7.easypanel.host"
+    NOCODB_TOKEN: str = "_H3KGTFKGtgMb3pQU5GXR2i17glb1ytl3hxYvVkT"
     NOCODB_BASE_ID: str = "pjo0a1kfnvm1ai3"
-    NOCODB_TABLE_ID: str = "m7i75nx5rkwockg"
+    NOCODB_TABLE_ID: str = "m6snjo5tgkirewb"
+    
+    # Tablas específicas
+    NOCODB_CONTACTOS_TABLE_ID: str = "m6snjo5tgkirewb"
+    NOCODB_COTIZACIONES_TABLE_ID: str = "m6rk1j231s70p8m"
+    NOCODB_MATERIALES_TABLE_ID: str = "m2p9ng5e1hn53k0"
+    NOCODB_LOGS_TABLE_ID: str = "m1xm2vu3e5bcuiy"
     
     # Variables de entorno del contenedor NocoDB
     NC_DATABASE_URL: Optional[str] = None

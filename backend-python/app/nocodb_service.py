@@ -14,9 +14,10 @@ logger = logging.getLogger(__name__)
 
 class NocodbService:
     def __init__(self):
-        self.base_url = settings.NOCODB_URL
-        self.token = settings.NOCODB_TOKEN
-        self.base_id = settings.NOCODB_BASE_ID
+        # Usar variables correctas de NocoDB
+        self.base_url = getattr(settings, 'NC_DB_URL', settings.NOCODB_URL)
+        self.token = getattr(settings, 'NC_TOKEN', settings.NOCODB_TOKEN)
+        self.base_id = getattr(settings, 'NC_DB_ID', settings.NOCODB_BASE_ID)
         
         # URLs para diferentes tablas con TABLE_IDs reales
         self.contactos_table_id = getattr(settings, 'NOCODB_CONTACTOS_TABLE_ID', 'm6snjo5tgkirewb')
