@@ -63,8 +63,8 @@ COPY backend-python/ /app/backend-python/
 # Instalar dependencias Python
 RUN pip install --no-cache-dir --break-system-packages -r /app/backend-python/requirements.txt
 
-# Copiar backend Node.js (si existe)
-COPY backend-node/ /app/backend-node/
+# Crear directorio backend-node (opcional)
+RUN mkdir -p /app/backend-node
 
 # Instalar dependencias Node.js (si existe)
 RUN if [ -f "/app/backend-node/package.json" ]; then \
