@@ -53,6 +53,14 @@ class SolarCalculator {
       });
     }
 
+    // Checkbox de baterías
+    const batteryCheckbox = document.getElementById('batteryBackup');
+    if (batteryCheckbox) {
+      batteryCheckbox.addEventListener('change', () => {
+        this.toggleBatteryOptions();
+      });
+    }
+
     // Selectores de materiales
     this.setupMaterialSelectors();
 
@@ -168,8 +176,11 @@ class SolarCalculator {
       
       if (!validation.isValid) {
         this.showError(validation.message);
+        this.showLoading(false);
         return;
       }
+
+      console.log('Enviando datos:', formData);
 
       const response = await fetch(`${this.apiBaseUrl}/quote`, {
         method: 'POST',
@@ -179,14 +190,27 @@ class SolarCalculator {
         body: JSON.stringify(formData)
       });
 
+      console.log('Respuesta del servidor:', response.status);
+
       if (response.ok) {
         const quote = await response.json();
+        console.log('Cotización recibida:', quote);
         this.currentQuote = quote;
         this.displayResults(quote.design);
         this.showSuccess('Cotización generada exitosamente');
       } else {
-        const error = await response.json();
-        this.showError(error.detail || 'Error generando cotización');
+        const errorText = await response.text();
+        console.error('Error del servidor:', errorText);
+        let errorMessage = 'Error generando cotización';
+        
+        try {
+          const errorJson = JSON.parse(errorText);
+          errorMessage = errorJson.detail || errorMessage;
+        } catch (e) {
+          errorMessage = errorText || errorMessage;
+        }
+        
+        this.showError(errorMessage);
       }
 
     } catch (error) {
@@ -468,6 +492,19 @@ class SolarCalculator {
       option.textContent = `${inverter.brand} ${inverter.model} - ${inverter.power_kw}kW - $${this.formatCurrency(inverter.price_ars)}`;
       inverterSelect.appendChild(option);
     });
+  }
+
+  toggleBatteryOptions() {
+    const batteryCheckbox = document.getElementById('batteryBackup');
+    const batteryOptions = document.getElementById('batteryOptions');
+    
+    if (batteryCheckbox && batteryOptions) {
+      if (batteryCheckbox.checked) {
+        batteryOptions.style.display = 'block';
+      } else {
+        batteryOptions.style.display = 'none';
+      }
+    }
   }
 
   formatCurrency(amount) {

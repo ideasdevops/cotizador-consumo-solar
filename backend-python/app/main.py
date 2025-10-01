@@ -16,11 +16,13 @@ from .models import (
 from .calculator import ConstructionCalculator
 from .price_service import PriceService
 from .email_service import email_service
+from .email_service_improved import improved_email_service
 from .nocodb_service import nocodb_service
 from .pdf_service import pdf_service
 from .argentina_apis import argentina_api_service, get_current_prices, get_current_exchange_rate
 from .price_updater import price_updater_service, start_price_updater, get_price_updater_status
 from .config import settings
+from .solar_routes import router as solar_router
 
 # Configuración de logging
 logging.basicConfig(level=logging.INFO)
@@ -28,8 +30,8 @@ logger = logging.getLogger(__name__)
 
 # Crear instancia de FastAPI
 app = FastAPI(
-    title="Cotizador de Construcción API - Sumpetrol",
-    description="API para cotización de construcciones steel frame e industriales con integración SMTP y Nocodb",
+    title="Cotizador Solar API - Sumpetrol",
+    description="API para cotización de sistemas solares fotovoltaicos con integración SMTP y Nocodb",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc"
@@ -48,20 +50,24 @@ app.add_middleware(
 calculator = ConstructionCalculator()
 price_service = PriceService()
 
+# Incluir rutas solares
+app.include_router(solar_router)
+
 @app.get("/")
 async def root():
     """Endpoint raíz"""
     return {
-        "message": "Cotizador de Construcción API - Sumpetrol",
+        "message": "Cotizador Solar API - Sumpetrol",
         "version": "1.0.0",
         "status": "activo",
-        "company": "Sumpetrol"
+        "company": "Sumpetrol",
+        "services": ["solar_calculator", "materials_service", "quote_service"]
     }
 
 @app.get("/health")
 async def health_check():
     """Verificación de salud de la API"""
-    return {"status": "healthy", "service": "cotizador_construccion", "company": "Sumpetrol"}
+    return {"status": "healthy", "service": "cotizador_solar", "company": "Sumpetrol"}
 
 @app.post("/cotizar", response_model=CotizacionResponse)
 async def crear_cotizacion(request: CotizacionRequest, background_tasks: BackgroundTasks):
@@ -182,18 +188,28 @@ async def _generate_and_send_pdf_email(customer_email: str, customer_name: str, 
 
 @app.post("/contacto/enviar")
 async def enviar_contacto(
-    nombre: str,
-    email: str,
-    mensaje: str,
+    request: Request,
     background_tasks: BackgroundTasks
 ):
     """Envía formulario de contacto"""
     try:
-        # Enviar email a marketing@sumpetrol.com.ar
+        # Obtener datos del body
+        body = await request.json()
+        
+        nombre = body.get('name') or body.get('nombre', '')
+        email = body.get('email', '')
+        telefono = body.get('phone') or body.get('telefono', '')
+        mensaje = body.get('message') or body.get('mensaje', '')
+        
+        if not nombre or not email or not mensaje:
+            raise HTTPException(status_code=400, detail="Faltan datos requeridos")
+        
+        # Enviar email usando el servicio mejorado
         background_tasks.add_task(
-            email_service.send_contact_form_email,
+            improved_email_service.send_contact_form_email,
             nombre,
             email,
+            telefono,
             mensaje
         )
         
@@ -204,15 +220,19 @@ async def enviar_contacto(
                 "fecha": datetime.now().strftime("%Y-%m-%d"),
                 "nombre": nombre,
                 "email": email,
+                "telefono": telefono,
                 "mensaje": mensaje
             }
         )
         
         return {
+            "success": True,
             "message": "Mensaje de contacto enviado exitosamente",
             "status": "enviado"
         }
         
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error enviando contacto: {e}")
         raise HTTPException(status_code=500, detail="Error enviando mensaje de contacto")
