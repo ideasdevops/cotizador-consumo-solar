@@ -69,6 +69,53 @@ async def health_check():
     """Verificación de salud de la API"""
     return {"status": "healthy", "service": "cotizador_solar", "company": "Sumpetrol"}
 
+@app.get("/test/nocodb")
+async def test_nocodb_connection():
+    """Test NocoDB connection"""
+    try:
+        # Test contactos table
+        contactos_result = await nocodb_service.get_contacts(limit=1)
+        
+        return {
+            "status": "success",
+            "nocodb_url": settings.NOCODB_URL,
+            "base_id": settings.NOCODB_BASE_ID,
+            "contactos_table_id": getattr(settings, 'NOCODB_CONTACTOS_TABLE_ID', 'not_set'),
+            "contactos_url": nocodb_service.contactos_url,
+            "contactos_test": "ok" if contactos_result is not None else "error",
+            "message": "NocoDB connection test completed"
+        }
+    except Exception as e:
+        logger.error(f"Error testing NocoDB connection: {e}")
+        return {
+            "status": "error",
+            "error": str(e),
+            "message": "NocoDB connection test failed"
+        }
+
+@app.get("/test/email")
+async def test_email_service():
+    """Test email service"""
+    try:
+        # Test email configuration
+        return {
+            "status": "success",
+            "smtp_server": settings.SMTP_SERVER,
+            "smtp_port": settings.SMTP_PORT,
+            "smtp_username": settings.SMTP_USERNAME,
+            "smtp_use_tls": settings.SMTP_USE_TLS,
+            "smtp_use_ssl": settings.SMTP_USE_SSL,
+            "contact_email": settings.CONTACT_EMAIL,
+            "message": "Email service configuration loaded"
+        }
+    except Exception as e:
+        logger.error(f"Error testing email service: {e}")
+        return {
+            "status": "error",
+            "error": str(e),
+            "message": "Email service test failed"
+        }
+
 @app.post("/cotizar", response_model=CotizacionResponse)
 async def crear_cotizacion(request: CotizacionRequest, background_tasks: BackgroundTasks):
     """Crea una nueva cotización de construcción"""

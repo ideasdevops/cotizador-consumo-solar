@@ -24,7 +24,7 @@ class NocodbService:
         self.materiales_table_id = getattr(settings, 'NOCODB_MATERIALES_TABLE_ID', 'm2p9ng5e1hn53k0')
         self.logs_table_id = getattr(settings, 'NOCODB_LOGS_TABLE_ID', 'm1xm2vu3e5bcuiy')
         
-        # URLs de API v2
+        # URLs de API v2 (sin base_id para v2)
         self.contactos_url = f"{self.base_url}/api/v2/tables/{self.contactos_table_id}/records"
         self.cotizaciones_url = f"{self.base_url}/api/v2/tables/{self.cotizaciones_table_id}/records"
         self.materiales_url = f"{self.base_url}/api/v2/tables/{self.materiales_table_id}/records"
@@ -34,6 +34,13 @@ class NocodbService:
             "xc-token": self.token,
             "Content-Type": "application/json"
         }
+        
+        logger.info(f"NocoDB Service initialized:")
+        logger.info(f"Base URL: {self.base_url}")
+        logger.info(f"Contactos URL: {self.contactos_url}")
+        logger.info(f"Cotizaciones URL: {self.cotizaciones_url}")
+        logger.info(f"Materiales URL: {self.materiales_url}")
+        logger.info(f"Logs URL: {self.logs_url}")
     
     async def save_contact_form(self, contact_data: Dict[str, Any]) -> bool:
         """
