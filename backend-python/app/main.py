@@ -25,17 +25,48 @@ from .config import settings
 from .solar_routes import router as solar_router
 
 # Función wrapper para guardar contacto en NocoDB
-async def save_contact_to_nocodb(contact_data: Dict[str, Any]):
-    """Wrapper para guardar contacto en NocoDB"""
+def save_contact_to_nocodb(contact_data: Dict[str, Any]):
+    """Wrapper síncrono para guardar contacto en NocoDB"""
+    import asyncio
+    import aiohttp
     try:
         logger.info(f"🔄 Guardando contacto en NocoDB: {contact_data.get('nombre', 'Sin nombre')}")
-        success = await nocodb_service.save_contact_form(contact_data)
-        if success:
-            logger.info("✅ Contacto guardado exitosamente en NocoDB")
-        else:
-            logger.error("❌ Error guardando contacto en NocoDB")
+        logger.info(f"📊 Datos recibidos: {contact_data}")
+        
+        # Preparar datos para NocoDB con columnas correctas
+        nocodb_data = {
+            "nombre_cliente": contact_data.get("nombre", ""),
+            "email_cliente": contact_data.get("email", ""),
+            "telefono_cliente": contact_data.get("telefono", ""),
+            "mensaje_consulta": contact_data.get("mensaje", ""),
+            "fecha_consulta": contact_data.get("fecha", datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+            "estado_consulta": "Nuevo",
+            "origen_consulta": "Web Solar",
+            "notas_internas": "",
+            "fecha_respuesta": None,
+            "usuario_respuesta": None
+        }
+        
+        logger.info(f"📝 Datos preparados para NocoDB: {nocodb_data}")
+        
+        # Crear nuevo loop de eventos para la tarea async
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        
+        try:
+            # Llamar directamente a la función async
+            success = loop.run_until_complete(nocodb_service.save_contact_form(contact_data))
+            if success:
+                logger.info("✅ Contacto guardado exitosamente en NocoDB")
+            else:
+                logger.error("❌ Error guardando contacto en NocoDB")
+        finally:
+            loop.close()
+            
     except Exception as e:
         logger.error(f"❌ Error en wrapper de guardado de contacto: {e}")
+        import traceback
+        logger.error(f"❌ Traceback: {traceback.format_exc()}")
 
 # Configuración de logging
 logging.basicConfig(level=logging.INFO)

@@ -1064,49 +1064,100 @@ function requestDetailedQuote() {
   }
 }
 
+function openWhatsAppForQuote() {
+  console.log('📱 Abriendo WhatsApp para cotización desde botón principal...');
+  
+  // Mensaje genérico para WhatsApp
+  const whatsappMessage = `¡Hola! Me interesa solicitar información sobre sistemas solares y una cotización personalizada.
+
+¿Podrían contactarme para coordinar una visita técnica?
+
+¡Gracias!`;
+  
+  const encodedMessage = encodeURIComponent(whatsappMessage);
+  const whatsappNumber = '+5492617110120';
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+  
+  console.log('📱 Abriendo WhatsApp con mensaje:', whatsappMessage);
+  
+  // Abrir WhatsApp en nueva ventana
+  window.open(whatsappUrl, '_blank');
+  
+  // Mostrar mensaje de confirmación
+  if (window.solarCalculator) {
+    window.solarCalculator.showSuccess('Redirigiendo a WhatsApp para solicitar información...');
+  }
+}
+
 function requestPersonalizedQuote() {
-  console.log('📧 Solicitando cotización personalizada...');
+  console.log('📱 Redirigiendo a WhatsApp para cotización personalizada...');
   
   if (window.solarCalculator && window.solarCalculator.currentQuote) {
     const quote = window.solarCalculator.currentQuote;
     
-    // Preparar datos para envío de email
-    const emailData = {
-      to: 'marketing@sumpetrol.com.ar',
-      subject: `Solicitud de Cotización Personalizada - ${quote.request?.client_name || 'Cliente'}`,
-      html: `
-        <h2>Solicitud de Cotización Personalizada</h2>
-        <p><strong>Cliente:</strong> ${quote.request?.client_name || 'N/A'}</p>
-        <p><strong>Email:</strong> ${quote.request?.client_email || 'N/A'}</p>
-        <p><strong>Teléfono:</strong> ${quote.request?.client_phone || 'N/A'}</p>
-        
-        <h3>Detalles de la Cotización:</h3>
-        <p><strong>ID de Cotización:</strong> ${quote.quote_id}</p>
-        <p><strong>Consumo Mensual:</strong> ${quote.request?.monthly_consumption_kwh || 'N/A'} kWh</p>
-        <p><strong>Ubicación:</strong> ${quote.request?.location || 'N/A'}</p>
-        <p><strong>Inversión Total:</strong> $${quote.design?.total_investment || 'N/A'}</p>
-        
-        <p>El cliente solicita una cotización personalizada basada en la cotización automática generada.</p>
-      `
-    };
+    // Preparar mensaje para WhatsApp con detalles de la cotización
+    const clientName = quote.request?.client_name || 'Cliente';
+    const clientEmail = quote.request?.client_email || 'N/A';
+    const clientPhone = quote.request?.client_phone || 'N/A';
+    const consumption = quote.request?.monthly_consumption_kwh || 'N/A';
+    const location = quote.request?.location || 'N/A';
+    const investment = quote.design?.total_investment || 'N/A';
+    const quoteId = quote.quote_id || 'N/A';
     
-    // Enviar email usando el servicio de email
-    if (window.emailService) {
-      window.emailService.sendQuoteEmail(emailData).then(success => {
-        if (success) {
-          window.solarCalculator.showSuccess('Solicitud enviada exitosamente. Te contactaremos pronto.');
-          closeModal('detailedQuoteModal');
-        } else {
-          window.solarCalculator.showError('Error enviando solicitud. Por favor, intenta más tarde.');
-        }
-      });
-    } else {
-      // Fallback: mostrar información de contacto
-      window.solarCalculator.showSuccess('Para solicitar una cotización personalizada, contactanos a marketing@sumpetrol.com.ar');
-      closeModal('detailedQuoteModal');
+    const whatsappMessage = `¡Hola! Me interesa solicitar una cotización personalizada para un sistema solar.
+
+📋 *Datos de la cotización:*
+• Cliente: ${clientName}
+• Email: ${clientEmail}
+• Teléfono: ${clientPhone}
+• Consumo mensual: ${consumption} kWh
+• Ubicación: ${location}
+• Inversión estimada: $${investment}
+• ID de cotización: ${quoteId}
+
+¿Podrían contactarme para coordinar una visita técnica y cotización personalizada?
+
+¡Gracias!`;
+
+    // Codificar el mensaje para URL
+    const encodedMessage = encodeURIComponent(whatsappMessage);
+    
+    // Número de WhatsApp de la empresa
+    const whatsappNumber = '+5492617110120'; // Sin espacios ni guiones para URL
+    
+    // Crear URL de WhatsApp
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+    
+    console.log('📱 Abriendo WhatsApp con mensaje:', whatsappMessage);
+    
+    // Abrir WhatsApp en nueva ventana
+    window.open(whatsappUrl, '_blank');
+    
+    // Cerrar modal
+    closeModal('detailedQuoteModal');
+    
+    // Mostrar mensaje de confirmación
+    if (window.solarCalculator) {
+      window.solarCalculator.showSuccess('Redirigiendo a WhatsApp para solicitar cotización personalizada...');
     }
+    
   } else {
-    window.solarCalculator.showError('No hay cotización disponible para enviar.');
+    // Si no hay cotización, enviar mensaje genérico
+    const genericMessage = `¡Hola! Me interesa solicitar información sobre sistemas solares y una cotización personalizada.
+
+¿Podrían contactarme para coordinar una visita técnica?
+
+¡Gracias!`;
+    
+    const encodedMessage = encodeURIComponent(genericMessage);
+    const whatsappNumber = '+5492617110120';
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+    
+    window.open(whatsappUrl, '_blank');
+    
+    if (window.solarCalculator) {
+      window.solarCalculator.showSuccess('Redirigiendo a WhatsApp para solicitar información...');
+    }
   }
 }
 
