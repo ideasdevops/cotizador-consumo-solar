@@ -242,9 +242,7 @@ class SolarCalculator:
                 components["battery_count"] = battery_count
         
         # 4. Seleccionar sistema de montaje
-        mounting_systems = self.materials_service.get_mounting_systems(
-            installation_type=request.installation_type
-        )
+        mounting_systems = self.materials_service.get_mounting_systems()
         
         if not mounting_systems:
             mounting_systems = self.materials_service.get_mounting_systems()
