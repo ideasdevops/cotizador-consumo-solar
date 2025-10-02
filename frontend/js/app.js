@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Configurar scroll suave para navegación
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', (e) => {
-      e.preventDefault();
+        e.preventDefault();
       const targetId = anchor.getAttribute('href');
       smoothScrollTo(targetId);
     });

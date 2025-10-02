@@ -49,6 +49,9 @@ class NocodbService:
         """
         try:
             logger.info(f"🔄 Guardando formulario de contacto: {contact_data.get('nombre', 'Sin nombre')}")
+            logger.info(f"🔗 URL de contacto: {self.contactos_url}")
+            logger.info(f"🔑 Token: {self.token[:10]}...")
+            logger.info(f"📊 Datos recibidos: {contact_data}")
             
             # Preparar datos para NocoDB con columnas correctas
             nocodb_data = {
@@ -65,8 +68,10 @@ class NocodbService:
             }
             
             logger.info(f"📝 Datos preparados para NocoDB: {nocodb_data}")
+            logger.info(f"📡 Headers: {self.headers}")
             
             async with aiohttp.ClientSession() as session:
+                logger.info(f"🚀 Enviando POST a: {self.contactos_url}")
                 async with session.post(
                     self.contactos_url,
                     json=nocodb_data,
@@ -75,6 +80,7 @@ class NocodbService:
                 ) as response:
                     
                     logger.info(f"📡 Respuesta recibida: {response.status}")
+                    logger.info(f"📡 Headers de respuesta: {dict(response.headers)}")
                     
                     if response.status == 200:
                         result = await response.json()
@@ -83,10 +89,15 @@ class NocodbService:
                     else:
                         error_text = await response.text()
                         logger.error(f"❌ Error guardando contacto: {response.status} - {error_text}")
+                        logger.error(f"❌ URL que falló: {self.contactos_url}")
+                        logger.error(f"❌ Datos enviados: {nocodb_data}")
                         return False
                         
         except Exception as e:
             logger.error(f"❌ Error guardando contacto: {e}")
+            logger.error(f"❌ Tipo de error: {type(e).__name__}")
+            import traceback
+            logger.error(f"❌ Traceback: {traceback.format_exc()}")
             return False
     
     async def save_solar_quote(self, quote_data: Dict[str, Any]) -> bool:
@@ -94,29 +105,32 @@ class NocodbService:
         Guarda cotización solar en NocoDB
         """
         try:
-            logger.info(f"🔄 Guardando cotización solar: {quote_data.get('client_name', 'Sin nombre')}")
+            logger.info(f"🔄 Guardando cotización solar: {quote_data.get('nombre_cliente', 'Sin nombre')}")
+            logger.info(f"🔗 URL de cotizaciones: {self.cotizaciones_url}")
+            logger.info(f"🔑 Token: {self.token[:10]}...")
+            logger.info(f"📊 Datos recibidos: {quote_data}")
             
-            # Preparar datos para NocoDB
+            # Preparar datos para NocoDB - Mapeo correcto según los campos enviados
             nocodb_data = {
-                "nombre_cliente": quote_data.get("client_name", ""),
-                "email_cliente": quote_data.get("client_email", ""),
-                "ubicacion_proyecto": quote_data.get("location", ""),
-                "consumo_mensual_kwh": quote_data.get("monthly_consumption_kwh", 0),
-                "tipo_tarifa": quote_data.get("tariff_type", ""),
-                "area_disponible_m2": quote_data.get("available_area_m2", 0),
-                "tipo_instalacion": quote_data.get("installation_type", ""),
-                "potencia_requerida_kwp": quote_data.get("design", {}).get("required_power_kwp", 0),
-                "cantidad_paneles": quote_data.get("design", {}).get("panel_count", 0),
-                "generacion_mensual_kwh": quote_data.get("design", {}).get("monthly_generation_kwh", 0),
-                "ahorro_mensual_ars": quote_data.get("design", {}).get("monthly_savings", 0),
-                "inversion_total_ars": quote_data.get("design", {}).get("total_investment", 0),
-                "retorno_inversion_anos": quote_data.get("design", {}).get("payback_years", 0),
-                "estado_cotizacion": "Nueva",
-                "fecha_creacion": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                "valida_hasta": quote_data.get("valid_until", ""),
-                "notas_proyecto": "",
-                "archivo_pdf": None
+                "nombre_cliente": quote_data.get("nombre_cliente", ""),
+                "email_cliente": quote_data.get("email_cliente", ""),
+                "ubicacion_proyecto": quote_data.get("ubicacion_proyecto", ""),
+                "consumo_mensual_kwh": quote_data.get("consumo_mensual_kwh", 0),
+                "tipo_tarifa": quote_data.get("tipo_tarifa", ""),
+                "area_disponible_m2": quote_data.get("area_disponible_m2", 0),
+                "tipo_instalacion": quote_data.get("tipo_instalacion", ""),
+                "potencia_requerida_kwp": quote_data.get("potencia_requerida_kwp", 0),
+                "cantidad_paneles": quote_data.get("cantidad_paneles", 0),
+                "generacion_mensual_kwh": quote_data.get("generacion_mensual_kwh", 0),
+                "ahorro_mensual_ars": quote_data.get("ahorro_mensual_ars", 0),
+                "inversion_total_ars": quote_data.get("inversion_total_ars", 0),
+                "roi_anos": quote_data.get("roi_anos", 0),
+                "fecha_cotizacion": quote_data.get("fecha_cotizacion", datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+                "estado_cotizacion": quote_data.get("estado_cotizacion", "generada"),
+                "notas_adicionales": quote_data.get("notas_adicionales", "")
             }
+            
+            logger.info(f"📋 Datos preparados para NocoDB: {nocodb_data}")
             
             async with aiohttp.ClientSession() as session:
                 async with session.post(

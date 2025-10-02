@@ -20,12 +20,12 @@ class Settings(BaseSettings):
     CONTACT_EMAIL: str = "marketing@sumpetrol.com.ar"
     
     # Configuración de Nocodb - Variables correctas
-    NC_DB_URL: str = "https://own-devops-nocodb.2lzju7.easypanel.host"
+    NC_DB_URL: str = "https://bots-nocodb.prskfv.easypanel.host"
     NC_TOKEN: str = "_H3KGTFKGtgMb3pQU5GXR2i17glb1ytl3hxYvVkT"
     NC_DB_ID: str = "pjo0a1kfnvm1ai3"
     
     # Variables legacy para compatibilidad
-    NOCODB_URL: str = "https://own-devops-nocodb.2lzju7.easypanel.host"
+    NOCODB_URL: str = "https://bots-nocodb.prskfv.easypanel.host"
     NOCODB_TOKEN: str = "_H3KGTFKGtgMb3pQU5GXR2i17glb1ytl3hxYvVkT"
     NOCODB_BASE_ID: str = "pjo0a1kfnvm1ai3"
     NOCODB_TABLE_ID: str = "m6snjo5tgkirewb"

@@ -373,6 +373,32 @@ class SolarCalculator {
   }
 
   validateFormData(data) {
+    // Validar campos del cliente (obligatorios)
+    if (!data.client_name || data.client_name.trim() === '') {
+      return { isValid: false, message: 'El nombre completo es obligatorio' };
+    }
+
+    if (!data.client_email || data.client_email.trim() === '') {
+      return { isValid: false, message: 'El email es obligatorio' };
+    }
+
+    // Validar formato de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(data.client_email)) {
+      return { isValid: false, message: 'Por favor ingresa un email válido' };
+    }
+
+    if (!data.client_phone || data.client_phone.trim() === '') {
+      return { isValid: false, message: 'El teléfono es obligatorio' };
+    }
+
+    // Validar formato de teléfono (básico)
+    const phoneRegex = /^[\+]?[0-9\s\-\(\)]{10,}$/;
+    if (!phoneRegex.test(data.client_phone)) {
+      return { isValid: false, message: 'Por favor ingresa un teléfono válido' };
+    }
+
+    // Validar campos técnicos
     if (!data.monthly_consumption_kwh || data.monthly_consumption_kwh <= 0) {
       return { isValid: false, message: 'El consumo mensual debe ser mayor a 0' };
     }
@@ -674,37 +700,55 @@ class SolarCalculator {
 
   // Métodos para modales
   showQuickEstimateModal(estimation) {
+    console.log('🔍 Mostrando modal de estimación rápida:', estimation);
+    
     const modal = document.getElementById('quickEstimateModal');
     const content = document.getElementById('quickEstimateContent');
+    
+    if (!modal || !content) {
+      console.error('❌ Modal o contenido no encontrado');
+      return;
+    }
+    
+    // Validar y extraer datos de manera segura
+    const powerKwp = estimation?.estimated_power_kwp || estimation?.power_kwp || 'N/A';
+    const panels = estimation?.estimated_panels || estimation?.panel_count || 'N/A';
+    const cost = estimation?.estimated_cost || estimation?.total_cost || 0;
+    const savings = estimation?.estimated_savings || estimation?.annual_savings || 0;
+    const consumption = estimation?.monthly_consumption || estimation?.consumption || 'N/A';
+    const location = estimation?.location || 'N/A';
+    const installationType = estimation?.installation_type || 'N/A';
+    
+    console.log('📊 Datos extraídos:', { powerKwp, panels, cost, savings, consumption, location, installationType });
     
     content.innerHTML = `
       <div class="quick-estimate-summary">
         <div class="estimate-card">
           <h3><i class="fas fa-bolt"></i> Potencia Estimada</h3>
-          <div class="value">${estimation.estimated_power_kwp} kWp</div>
+          <div class="value">${powerKwp} kWp</div>
           <div class="label">Sistema Solar</div>
         </div>
         <div class="estimate-card">
           <h3><i class="fas fa-solar-panel"></i> Paneles</h3>
-          <div class="value">${estimation.estimated_panels}</div>
+          <div class="value">${panels}</div>
           <div class="label">Unidades</div>
         </div>
         <div class="estimate-card">
           <h3><i class="fas fa-dollar-sign"></i> Inversión</h3>
-          <div class="value">${this.formatCurrency(estimation.estimated_cost)}</div>
+          <div class="value">${this.formatCurrency(cost)}</div>
           <div class="label">Aproximada</div>
         </div>
         <div class="estimate-card">
           <h3><i class="fas fa-chart-line"></i> Ahorro Anual</h3>
-          <div class="value">${this.formatCurrency(estimation.estimated_savings)}</div>
+          <div class="value">${this.formatCurrency(savings)}</div>
           <div class="label">Estimado</div>
         </div>
       </div>
       <div class="quote-section">
         <h3><i class="fas fa-info-circle"></i> Información de la Estimación</h3>
-        <p><strong>Consumo mensual:</strong> ${estimation.monthly_consumption} kWh</p>
-        <p><strong>Ubicación:</strong> ${estimation.location}</p>
-        <p><strong>Tipo de instalación:</strong> ${estimation.installation_type}</p>
+        <p><strong>Consumo mensual:</strong> ${consumption} kWh</p>
+        <p><strong>Ubicación:</strong> ${location}</p>
+        <p><strong>Tipo de instalación:</strong> ${installationType}</p>
         <p><strong>Fecha de estimación:</strong> ${new Date().toLocaleDateString('es-AR')}</p>
         <p class="text-muted">Esta es una estimación preliminar. Para obtener una cotización precisa, solicita una cotización completa con nuestros expertos.</p>
       </div>
@@ -712,6 +756,7 @@ class SolarCalculator {
     
     modal.style.display = 'flex';
     this.currentEstimation = estimation;
+    console.log('✅ Modal de estimación rápida mostrado correctamente');
   }
 
   showDetailedQuoteModal(quote) {
@@ -876,26 +921,63 @@ function closeModal(modalId) {
 
 function downloadQuickEstimatePDF() {
   if (window.solarCalculator && window.solarCalculator.currentEstimation) {
-    // Generar PDF de estimación rápida
+    // Generar PDF de estimación rápida usando jsPDF
     const estimation = window.solarCalculator.currentEstimation;
-    const pdfData = {
-      type: 'quick_estimate',
-      data: estimation,
-      generated_at: new Date().toISOString()
-    };
     
-    const dataStr = JSON.stringify(pdfData, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
+    // Crear contenido HTML para el PDF
+    const htmlContent = `
+      <div style="font-family: Arial, sans-serif; padding: 20px;">
+        <h1 style="color: #f97316; text-align: center;">SUMPETROL ENERGY</h1>
+        <h2 style="text-align: center;">Estimación Rápida de Sistema Solar</h2>
+        
+        <div style="margin: 20px 0;">
+          <h3>Generación Energética Estimada:</h3>
+          <p><strong>Generación Diaria:</strong> ${estimation.daily_generation || 'N/A'} kWh</p>
+          <p><strong>Generación Mensual:</strong> ${estimation.monthly_generation || 'N/A'} kWh</p>
+          <p><strong>Generación Anual:</strong> ${estimation.yearly_generation || 'N/A'} kWh</p>
+        </div>
+        
+        <div style="margin: 20px 0;">
+          <h3>Análisis Económico:</h3>
+          <p><strong>Ahorro Mensual Estimado:</strong> $${estimation.monthly_savings || 'N/A'}</p>
+          <p><strong>Ahorro Anual Estimado:</strong> $${estimation.yearly_savings || 'N/A'}</p>
+          <p><strong>Retorno de Inversión:</strong> ${estimation.payback_years || 'N/A'} años</p>
+        </div>
+        
+        <div style="margin: 20px 0;">
+          <h3>Especificaciones del Sistema:</h3>
+          <p><strong>Potencia Requerida:</strong> ${estimation.required_power || 'N/A'} kWp</p>
+          <p><strong>Cantidad de Paneles:</strong> ${estimation.panel_count || 'N/A'}</p>
+          <p><strong>Tipo de Instalación:</strong> ${estimation.installation_type || 'N/A'}</p>
+        </div>
+        
+        <div style="margin-top: 30px; text-align: center; color: #666;">
+          <p>Esta estimación es válida por 30 días y está sujeta a cambios en precios de materiales.</p>
+          <p>Generado el: ${new Date().toLocaleDateString('es-AR')}</p>
+        </div>
+      </div>
+    `;
     
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `estimacion_rapida_${new Date().toISOString().split('T')[0]}.json`;
-    link.click();
+    // Usar window.print() para generar PDF
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Estimación Rápida - Sumpetrol Energy</title>
+          <style>
+            @media print {
+              body { margin: 0; }
+              @page { margin: 1cm; }
+            }
+          </style>
+        </head>
+        <body>${htmlContent}</body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
     
-    URL.revokeObjectURL(url);
-    
-    window.solarCalculator.showSuccess('Estimación descargada exitosamente');
+    window.solarCalculator.showSuccess('PDF de estimación generado exitosamente');
   }
 }
 
@@ -903,24 +985,73 @@ function downloadDetailedQuotePDF() {
   if (window.solarCalculator && window.solarCalculator.currentQuote) {
     // Generar PDF de cotización detallada
     const quote = window.solarCalculator.currentQuote;
-    const pdfData = {
-      type: 'detailed_quote',
-      data: quote,
-      generated_at: new Date().toISOString()
-    };
     
-    const dataStr = JSON.stringify(pdfData, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
+    // Crear contenido HTML para el PDF
+    const htmlContent = `
+      <div style="font-family: Arial, sans-serif; padding: 20px;">
+        <h1 style="color: #f97316; text-align: center;">SUMPETROL ENERGY</h1>
+        <h2 style="text-align: center;">Cotización Detallada de Sistema Solar</h2>
+        
+        <div style="margin: 20px 0;">
+          <h3>Información de la Cotización:</h3>
+          <p><strong>ID de Cotización:</strong> ${quote.quote_id || 'N/A'}</p>
+          <p><strong>Fecha de Generación:</strong> ${new Date().toLocaleDateString('es-AR')}</p>
+          <p><strong>Válida hasta:</strong> ${new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('es-AR')}</p>
+          <p><strong>Cliente:</strong> ${quote.request?.client_name || 'N/A'}</p>
+          <p><strong>Email:</strong> ${quote.request?.client_email || 'N/A'}</p>
+        </div>
+        
+        <div style="margin: 20px 0;">
+          <h3>Generación Energética:</h3>
+          <p><strong>Generación Diaria:</strong> ${quote.design?.daily_generation || 'N/A'} kWh</p>
+          <p><strong>Generación Mensual:</strong> ${quote.design?.monthly_generation || 'N/A'} kWh</p>
+          <p><strong>Generación Anual:</strong> ${quote.design?.yearly_generation || 'N/A'} kWh</p>
+        </div>
+        
+        <div style="margin: 20px 0;">
+          <h3>Análisis Económico:</h3>
+          <p><strong>Ahorro Mensual:</strong> $${quote.design?.monthly_savings || 'N/A'}</p>
+          <p><strong>Ahorro Anual:</strong> $${quote.design?.yearly_savings || 'N/A'}</p>
+          <p><strong>Retorno de Inversión:</strong> ${quote.design?.payback_years || 'N/A'} años</p>
+          <p><strong>ROI:</strong> ${quote.design?.roi_percentage || 'N/A'}%</p>
+        </div>
+        
+        <div style="margin: 20px 0;">
+          <h3>Desglose de Costos:</h3>
+          <p><strong>Paneles Solares:</strong> $${quote.design?.panel_cost || 'N/A'}</p>
+          <p><strong>Inversores:</strong> $${quote.design?.inverter_cost || 'N/A'}</p>
+          <p><strong>Sistema de Montaje:</strong> $${quote.design?.mounting_cost || 'N/A'}</p>
+          <p><strong>Instalación:</strong> $${quote.design?.installation_cost || 'N/A'}</p>
+          <p><strong>Total de Inversión:</strong> $${quote.design?.total_investment || 'N/A'}</p>
+        </div>
+        
+        <div style="margin-top: 30px; text-align: center; color: #666;">
+          <p>Esta cotización es válida por 30 días y está sujeta a cambios en precios de materiales.</p>
+          <p>Para más información, contactanos a marketing@sumpetrol.com.ar</p>
+        </div>
+      </div>
+    `;
     
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `cotizacion_detallada_${quote.quote_id}.json`;
-    link.click();
+    // Usar window.print() para generar PDF
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Cotización Detallada - Sumpetrol Energy</title>
+          <style>
+            @media print {
+              body { margin: 0; }
+              @page { margin: 1cm; }
+            }
+          </style>
+        </head>
+        <body>${htmlContent}</body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
     
-    URL.revokeObjectURL(url);
-    
-    window.solarCalculator.showSuccess('Cotización descargada exitosamente');
+    window.solarCalculator.showSuccess('PDF de cotización generado exitosamente');
   }
 }
 
@@ -934,11 +1065,48 @@ function requestDetailedQuote() {
 }
 
 function requestPersonalizedQuote() {
-  closeModal('detailedQuoteModal');
-  // Scroll al formulario de contacto
-  const contactoSection = document.getElementById('contacto');
-  if (contactoSection) {
-    contactoSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  console.log('📧 Solicitando cotización personalizada...');
+  
+  if (window.solarCalculator && window.solarCalculator.currentQuote) {
+    const quote = window.solarCalculator.currentQuote;
+    
+    // Preparar datos para envío de email
+    const emailData = {
+      to: 'marketing@sumpetrol.com.ar',
+      subject: `Solicitud de Cotización Personalizada - ${quote.request?.client_name || 'Cliente'}`,
+      html: `
+        <h2>Solicitud de Cotización Personalizada</h2>
+        <p><strong>Cliente:</strong> ${quote.request?.client_name || 'N/A'}</p>
+        <p><strong>Email:</strong> ${quote.request?.client_email || 'N/A'}</p>
+        <p><strong>Teléfono:</strong> ${quote.request?.client_phone || 'N/A'}</p>
+        
+        <h3>Detalles de la Cotización:</h3>
+        <p><strong>ID de Cotización:</strong> ${quote.quote_id}</p>
+        <p><strong>Consumo Mensual:</strong> ${quote.request?.monthly_consumption_kwh || 'N/A'} kWh</p>
+        <p><strong>Ubicación:</strong> ${quote.request?.location || 'N/A'}</p>
+        <p><strong>Inversión Total:</strong> $${quote.design?.total_investment || 'N/A'}</p>
+        
+        <p>El cliente solicita una cotización personalizada basada en la cotización automática generada.</p>
+      `
+    };
+    
+    // Enviar email usando el servicio de email
+    if (window.emailService) {
+      window.emailService.sendQuoteEmail(emailData).then(success => {
+        if (success) {
+          window.solarCalculator.showSuccess('Solicitud enviada exitosamente. Te contactaremos pronto.');
+          closeModal('detailedQuoteModal');
+        } else {
+          window.solarCalculator.showError('Error enviando solicitud. Por favor, intenta más tarde.');
+        }
+      });
+    } else {
+      // Fallback: mostrar información de contacto
+      window.solarCalculator.showSuccess('Para solicitar una cotización personalizada, contactanos a marketing@sumpetrol.com.ar');
+      closeModal('detailedQuoteModal');
+    }
+  } else {
+    window.solarCalculator.showError('No hay cotización disponible para enviar.');
   }
 }
 
@@ -953,9 +1121,23 @@ function submitClientInfo() {
     address: formData.get('clientAddress')
   };
   
-  // Validar datos
-  if (!clientData.name || !clientData.email) {
-    alert('Por favor completa los campos obligatorios (Nombre y Email)');
+  // Validar datos obligatorios
+  if (!clientData.name || !clientData.email || !clientData.phone) {
+    alert('Por favor completa todos los campos obligatorios (Nombre, Email y Teléfono)');
+    return;
+  }
+  
+  // Validar formato de email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(clientData.email)) {
+    alert('Por favor ingresa un email válido');
+    return;
+  }
+  
+  // Validar formato de teléfono (básico)
+  const phoneRegex = /^[\+]?[0-9\s\-\(\)]{10,}$/;
+  if (!phoneRegex.test(clientData.phone)) {
+    alert('Por favor ingresa un teléfono válido');
     return;
   }
   
