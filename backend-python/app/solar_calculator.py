@@ -479,15 +479,29 @@ class SolarCalculator:
     
     def _map_battery_dict(self, battery_dict: Dict[str, Any]) -> Battery:
         """Mapear diccionario de batería a objeto Battery"""
+        logger.info(f"🔋 Mapeando batería: {battery_dict.get('id', 'unknown')}")
+        logger.info(f"🔋 Datos de batería: {battery_dict}")
+        
+        # Verificar campos requeridos
+        required_fields = ["capacity_ah", "dimensions", "weight"]
+        missing_fields = [field for field in required_fields if field not in battery_dict]
+        
+        if missing_fields:
+            logger.warning(f"⚠️ Campos faltantes en batería: {missing_fields}")
+            logger.warning(f"⚠️ Usando valores por defecto para: {missing_fields}")
+        
         return Battery(
             id=battery_dict.get("id", "battery_default"),
             name=battery_dict.get("model", "Batería Solar"),
             brand=battery_dict.get("brand", "Marca"),
             model=battery_dict.get("model", "Modelo"),
-            power_kwh=float(battery_dict.get("power_kw", 10.0)),
+            capacity_ah=float(battery_dict.get("capacity_ah", 200.0)),  # Campo requerido agregado
             voltage=float(battery_dict.get("voltage", 48.0)),
+            power_kwh=float(battery_dict.get("power_kw", 10.0)),
             cycles=int(battery_dict.get("cycles", 6000)),
             efficiency=float(battery_dict.get("efficiency", 95.0)),
+            dimensions=battery_dict.get("dimensions", {"width": 500, "height": 300, "depth": 200}),  # Campo requerido agregado
+            weight=float(battery_dict.get("weight", 50.0)),  # Campo requerido agregado
             price_ars=float(battery_dict.get("price_ars", 3000000)),
             warranty_years=int(battery_dict.get("warranty_years", 10)),
             type=battery_dict.get("type", "litio")

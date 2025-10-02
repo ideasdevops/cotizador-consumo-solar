@@ -203,6 +203,11 @@ async def estimate_system_size(
 ) -> Dict[str, Any]:
     """Estimar tamaño del sistema solar"""
     try:
+        logger.info(f"🔍 Iniciando estimación rápida:")
+        logger.info(f"   📊 Consumo mensual: {monthly_consumption} kWh")
+        logger.info(f"   📍 Ubicación: {location}")
+        logger.info(f"   🏠 Tipo de instalación: {installation_type}")
+        
         if monthly_consumption <= 0:
             raise HTTPException(status_code=400, detail="El consumo mensual debe ser mayor a 0")
         
@@ -212,12 +217,16 @@ async def estimate_system_size(
             installation_type=installation_type
         )
         
+        logger.info(f"✅ Estimación completada: {estimation}")
         return estimation
         
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error estimando sistema: {e}")
+        logger.error(f"❌ Error estimando sistema: {e}")
+        logger.error(f"❌ Tipo de error: {type(e).__name__}")
+        import traceback
+        logger.error(f"❌ Traceback: {traceback.format_exc()}")
         raise HTTPException(status_code=500, detail="Error interno del servidor")
 
 

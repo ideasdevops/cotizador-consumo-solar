@@ -102,7 +102,14 @@ class SolarMaterialsService:
                     "specifications": "Batería de litio de 13.5kWh",
                     "warranty_years": 10,
                     "supplier": "Tesla Argentina",
-                    "type": "litio"
+                    "type": "litio",
+                    # Campos requeridos agregados
+                    "capacity_ah": 280.0,
+                    "voltage": 48.0,
+                    "cycles": 6000,
+                    "efficiency": 95.0,
+                    "dimensions": {"width": 1150, "height": 755, "depth": 155},
+                    "weight": 114.0
                 }
             ],
             "mounting": [
@@ -201,7 +208,14 @@ class SolarMaterialsService:
                                     "specifications": material.get("especificaciones_tecnicas", ""),
                                     "warranty_years": material.get("garantia_anos", 0),
                                     "supplier": material.get("proveedor", ""),
-                                    "type": "litio"  # Default type
+                                    "type": material.get("type", "litio"),
+                                    # Campos requeridos agregados
+                                    "capacity_ah": material.get("capacity_ah", 200.0),
+                                    "voltage": material.get("voltage", 48.0),
+                                    "cycles": material.get("cycles", 6000),
+                                    "efficiency": material.get("efficiency", 95.0),
+                                    "dimensions": material.get("dimensions", {"width": 500, "height": 300, "depth": 200}),
+                                    "weight": material.get("weight", 50.0)
                                 })
                             elif material_type == "montaje":
                                 organized_materials["mounting"].append({
