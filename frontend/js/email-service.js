@@ -62,7 +62,7 @@ class EmailService {
         html: this.createContactEmailHTML(contactData)
       };
       
-      const response = await fetch('/api/contacto/enviar', {
+      const response = await fetch('/contacto/enviar', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

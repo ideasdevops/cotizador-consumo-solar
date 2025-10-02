@@ -765,12 +765,30 @@ async def get_external_solar_materials() -> List[Dict[str, Any]]:
 async def send_quote_email(quote: SolarQuoteResponse):
     """Enviar email con la cotización (función de background)"""
     try:
-        # Aquí implementarías el envío de email
-        # Por ahora solo log
         logger.info(f"Enviando email de cotización {quote.quote_id} a {quote.request.client_email}")
         
-        # TODO: Implementar envío real de email
-        # email_service.send_quote_email(quote)
+        # Importar el servicio de email mejorado
+        from .email_service_improved import improved_email_service
+        
+        # Enviar email al cliente
+        success = improved_email_service.send_quote_email(
+            customer_email=quote.request.client_email,
+            customer_name=quote.request.client_name,
+            quote_data=quote.dict()
+        )
+        
+        if success:
+            logger.info(f"Email de cotización enviado exitosamente a {quote.request.client_email}")
+        else:
+            logger.error(f"Error enviando email de cotización a {quote.request.client_email}")
+        
+        # Enviar notificación interna a marketing
+        notification_success = improved_email_service.send_quote_notification_email(quote.dict())
+        
+        if notification_success:
+            logger.info("Notificación interna enviada a marketing@sumpetrol.com.ar")
+        else:
+            logger.error("Error enviando notificación interna")
         
     except Exception as e:
         logger.error(f"Error enviando email de cotización: {e}")
