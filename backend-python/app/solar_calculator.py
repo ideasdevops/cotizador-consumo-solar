@@ -176,11 +176,11 @@ class SolarCalculator:
         if not panels:
             raise ValueError("No hay paneles disponibles")
         
-        # Seleccionar el panel más eficiente
-        selected_panel = max(panels, key=lambda p: p.efficiency)
+        # Seleccionar el panel más eficiente (usar power_watts como criterio)
+        selected_panel = max(panels, key=lambda p: p.get("power_watts", 0))
         
         # Calcular cantidad de paneles
-        panel_count = math.ceil((required_power * 1000) / selected_panel.power_watts)
+        panel_count = math.ceil((required_power * 1000) / selected_panel.get("power_watts", 400))
         components["panels"] = [selected_panel] * panel_count
         components["panel_count"] = panel_count
         
@@ -195,23 +195,23 @@ class SolarCalculator:
             raise ValueError("No hay inversores disponibles")
         
         # Seleccionar inversor apropiado (80-120% de la potencia del sistema)
-        system_power_kw = (panel_count * selected_panel.power_watts) / 1000
+        system_power_kw = (panel_count * selected_panel.get("power_watts", 400)) / 1000
         min_inverter_power = system_power_kw * 0.8
         max_inverter_power = system_power_kw * 1.2
         
         suitable_inverters = [
             inv for inv in inverters 
-            if min_inverter_power <= inv.power_kw <= max_inverter_power
+            if min_inverter_power <= inv.get("power_kw", 0) <= max_inverter_power
         ]
         
         if suitable_inverters:
-            selected_inverter = min(suitable_inverters, key=lambda i: i.power_kw)
+            selected_inverter = min(suitable_inverters, key=lambda i: i.get("power_kw", 0))
         else:
             # Si no hay inversor en el rango, usar el más cercano
-            selected_inverter = min(inverters, key=lambda i: abs(i.power_kw - system_power_kw))
+            selected_inverter = min(inverters, key=lambda i: abs(i.get("power_kw", 0) - system_power_kw))
         
         # Calcular cantidad de inversores
-        inverter_count = math.ceil(system_power_kw / selected_inverter.power_kw)
+        inverter_count = math.ceil(system_power_kw / selected_inverter.get("power_kw", 5.0))
         components["inverters"] = [selected_inverter] * inverter_count
         components["inverter_count"] = inverter_count
         
@@ -229,15 +229,15 @@ class SolarCalculator:
                 # Seleccionar batería apropiada
                 suitable_batteries = [
                     bat for bat in batteries 
-                    if bat.power_kwh >= required_capacity
+                    if bat.get("power_kw", 0) >= required_capacity
                 ]
                 
                 if suitable_batteries:
-                    selected_battery = min(suitable_batteries, key=lambda b: b.power_kwh)
+                    selected_battery = min(suitable_batteries, key=lambda b: b.get("power_kw", 0))
                 else:
-                    selected_battery = max(batteries, key=lambda b: b.power_kwh)
+                    selected_battery = max(batteries, key=lambda b: b.get("power_kw", 0))
                 
-                battery_count = math.ceil(required_capacity / selected_battery.power_kwh)
+                battery_count = math.ceil(required_capacity / selected_battery.get("power_kw", 10))
                 components["batteries"] = [selected_battery] * battery_count
                 components["battery_count"] = battery_count
         
@@ -255,25 +255,22 @@ class SolarCalculator:
             raise ValueError("No hay sistemas de montaje disponibles")
         
         # 5. Seleccionar cables
-        # Calcular corriente máxima del sistema
-        max_current = (panel_count * selected_panel.max_current) / inverter_count
+        # Calcular corriente máxima del sistema (estimación)
+        max_current = (panel_count * selected_panel.get("power_watts", 400)) / (inverter_count * 220)  # V estimado
         
         # Seleccionar cable apropiado (con margen de seguridad)
-        cables = self.materials_service.get_cables(min_section=max_current * 1.25)
+        cables = self.materials_service.get_cables()
         
         if cables:
-            selected_cable = cables[0]  # Usar el cable con menor sección que cumple
+            selected_cable = cables[0]  # Usar el primer cable disponible
             # Estimar longitud de cables (simplificado)
             cable_length = math.sqrt(request.available_area_m2) * 2  # Estimación
-            cable_count = math.ceil(cable_length / selected_cable.length_meters)
-            components["cables"] = [selected_cable] * cable_count
+            components["cables"] = [selected_cable]
         else:
             components["cables"] = []
         
         # 6. Seleccionar dispositivos de protección
-        protection_devices = self.materials_service.get_protection_devices(
-            min_current=max_current * 1.25
-        )
+        protection_devices = self.materials_service.get_protection_devices()
         
         if protection_devices:
             components["protection"] = protection_devices[:2]  # Fusible y disyuntor
