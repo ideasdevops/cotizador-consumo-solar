@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     SMTP_PORT: int = 465
     SMTP_USERNAME: str = "novedades@sumpetrol.com.ar"
     SMTP_PASSWORD: str = "Novedad3s2k24@@"
-    SMTP_USE_TLS: bool = True
+    SMTP_USE_TLS: bool = False
     SMTP_USE_SSL: bool = True
     
     # Email de recepción de consultas

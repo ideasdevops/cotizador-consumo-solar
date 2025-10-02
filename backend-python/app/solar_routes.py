@@ -840,10 +840,13 @@ async def send_quote_email(quote: SolarQuoteResponse):
 async def get_materials():
     """Obtener lista de materiales solares desde NocoDB"""
     try:
-        logger.info("Obteniendo materiales desde NocoDB...")
+        logger.info("🔍 Obteniendo materiales desde NocoDB...")
+        logger.info(f"📡 URL de NocoDB: {nocodb_service.materiales_url}")
+        logger.info(f"🔑 Token configurado: {'Sí' if nocodb_service.nocodb_token else 'No'}")
         
         # Obtener materiales desde NocoDB
         materials_data = await nocodb_service.get_materials_from_nocodb()
+        logger.info(f"📦 Materiales obtenidos: {len(materials_data) if materials_data else 0} registros")
         
         if materials_data:
             # Organizar materiales por tipo para el frontend
