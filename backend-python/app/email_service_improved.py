@@ -65,16 +65,10 @@ class ImprovedEmailService:
         Envía email de formulario de contacto
         """
         try:
-            # Email al cliente
-            client_msg = MIMEMultipart()
-            client_msg['From'] = f"Sumpetrol Solar <{self.username}>"
-            client_msg['To'] = email
-            client_msg['Subject'] = "✅ Consulta recibida - Sumpetrol Solar"
+            logger.info(f"📧 Enviando email de formulario de contacto...")
+            logger.info(f"👤 Cliente: {name}, Email: {email}, Teléfono: {phone}")
             
-            client_body = self._create_contact_confirmation_body(name)
-            client_msg.attach(MIMEText(client_body, 'html', 'utf-8'))
-            
-            # Email interno
+            # Solo enviar email interno a marketing (no al cliente)
             internal_msg = MIMEMultipart()
             internal_msg['From'] = self.username
             internal_msg['To'] = self.contact_email
@@ -83,11 +77,11 @@ class ImprovedEmailService:
             internal_body = self._create_contact_internal_body(name, email, phone, message)
             internal_msg.attach(MIMEText(internal_body, 'html', 'utf-8'))
             
-            # Enviar ambos emails
-            client_sent = self._send_email(client_msg)
+            # Enviar solo email interno
             internal_sent = self._send_email(internal_msg)
             
-            return client_sent and internal_sent
+            logger.info(f"✅ Email de contacto enviado a {self.contact_email}: {internal_sent}")
+            return internal_sent
             
         except Exception as e:
             logger.error(f"Error enviando email de contacto: {e}")

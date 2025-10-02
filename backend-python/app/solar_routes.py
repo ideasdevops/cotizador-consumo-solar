@@ -1,7 +1,7 @@
 """
 Rutas de la API para el sistema de cotización solar
 """
-from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks
+from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks, Request
 from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
 import logging
@@ -196,17 +196,20 @@ async def get_location_sun_data(location: str) -> Dict[str, Any]:
 
 
 @router.post("/estimate")
-async def estimate_system_size(
-    monthly_consumption: float,
-    location: str,
-    installation_type: InstallationType
-) -> Dict[str, Any]:
+async def estimate_system_size(request: Request) -> Dict[str, Any]:
     """Estimar tamaño del sistema solar"""
     try:
+        # Extraer datos del request
+        body = await request.json()
+        monthly_consumption = body.get('monthly_consumption', 0)
+        location = body.get('location', '')
+        installation_type = body.get('installation_type', 'techo_residencial')
+        
         logger.info(f"🔍 Iniciando estimación rápida:")
         logger.info(f"   📊 Consumo mensual: {monthly_consumption} kWh")
         logger.info(f"   📍 Ubicación: {location}")
         logger.info(f"   🏠 Tipo de instalación: {installation_type}")
+        logger.info(f"   📋 Datos recibidos: {body}")
         
         if monthly_consumption <= 0:
             raise HTTPException(status_code=400, detail="El consumo mensual debe ser mayor a 0")

@@ -24,6 +24,19 @@ from .price_updater import price_updater_service, start_price_updater, get_price
 from .config import settings
 from .solar_routes import router as solar_router
 
+# Función wrapper para guardar contacto en NocoDB
+async def save_contact_to_nocodb(contact_data: Dict[str, Any]):
+    """Wrapper para guardar contacto en NocoDB"""
+    try:
+        logger.info(f"🔄 Guardando contacto en NocoDB: {contact_data.get('nombre', 'Sin nombre')}")
+        success = await nocodb_service.save_contact_form(contact_data)
+        if success:
+            logger.info("✅ Contacto guardado exitosamente en NocoDB")
+        else:
+            logger.error("❌ Error guardando contacto en NocoDB")
+    except Exception as e:
+        logger.error(f"❌ Error en wrapper de guardado de contacto: {e}")
+
 # Configuración de logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -268,7 +281,7 @@ async def enviar_contacto(
         
         # Guardar en Nocodb
         background_tasks.add_task(
-            nocodb_service.save_contact_form,
+            save_contact_to_nocodb,
             {
                 "fecha": datetime.now().strftime("%Y-%m-%d"),
                 "nombre": nombre,
