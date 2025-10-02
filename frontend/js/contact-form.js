@@ -107,6 +107,7 @@ class ContactFormManager {
   async sendContactForm(data) {
     try {
       console.log('📧 Enviando formulario de contacto:', data);
+      console.log('📡 Endpoint:', '/contacto/enviar');
       
       const response = await fetch('/contacto/enviar', {
         method: 'POST',
@@ -116,14 +117,27 @@ class ContactFormManager {
         body: JSON.stringify(data)
       });
 
+      console.log('📡 Respuesta del servidor:', response.status, response.statusText);
+
       if (response.ok) {
         const result = await response.json();
         console.log('✅ Formulario enviado exitosamente:', result);
         return true;
       } else {
-        const error = await response.json();
-        console.error('❌ Error del servidor:', error);
-        this.showErrorMessage(error.detail || 'Error enviando el mensaje');
+        // Intentar obtener el error como JSON primero
+        let errorMessage = 'Error enviando el mensaje';
+        try {
+          const error = await response.json();
+          console.error('❌ Error del servidor (JSON):', error);
+          errorMessage = error.detail || error.message || errorMessage;
+        } catch {
+          // Si no es JSON, obtener como texto
+          const errorText = await response.text();
+          console.error('❌ Error del servidor (texto):', response.status, errorText);
+          errorMessage = `Error ${response.status}: ${errorText}`;
+        }
+        
+        this.showErrorMessage(errorMessage);
         return false;
       }
       

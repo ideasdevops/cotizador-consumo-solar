@@ -22,6 +22,15 @@ logger = logging.getLogger(__name__)
 # Router para las rutas solares
 router = APIRouter(prefix="/api/solar", tags=["solar"])
 
+@router.get("/health")
+async def health_check():
+    """Endpoint de salud para verificar conectividad"""
+    return {
+        "status": "ok",
+        "message": "Solar API is running",
+        "timestamp": datetime.now().isoformat()
+    }
+
 # Instancias de servicios
 materials_service = SolarMaterialsService()
 solar_calculator = SolarCalculator()

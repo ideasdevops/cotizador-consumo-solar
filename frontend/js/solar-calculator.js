@@ -16,11 +16,31 @@ class SolarCalculator {
   }
 
   async init() {
-    console.log('Inicializando calculadora solar...');
+    console.log('🚀 Inicializando calculadora solar...');
+    console.log('📡 API Base URL:', this.apiBaseUrl);
+    
+    // Verificar conectividad primero
+    await this.checkApiHealth();
+    
     await this.loadMaterials();
     this.setupEventListeners();
     this.setupFormValidation();
-    console.log('Calculadora solar inicializada correctamente');
+    console.log('✅ Calculadora solar inicializada correctamente');
+  }
+
+  async checkApiHealth() {
+    try {
+      console.log('🔍 Verificando conectividad con API...');
+      const response = await fetch(`${this.apiBaseUrl}/health`);
+      if (response.ok) {
+        const health = await response.json();
+        console.log('✅ API saludable:', health);
+      } else {
+        console.error('❌ API no responde correctamente:', response.status);
+      }
+    } catch (error) {
+      console.error('❌ Error de conectividad con API:', error);
+    }
   }
 
   async loadMaterials() {
