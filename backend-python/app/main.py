@@ -240,15 +240,21 @@ async def enviar_contacto(
 ):
     """Envía formulario de contacto"""
     try:
+        logger.info("📧 Recibiendo formulario de contacto...")
+        
         # Obtener datos del body
         body = await request.json()
+        logger.info(f"📋 Datos recibidos: {body}")
         
         nombre = body.get('name') or body.get('nombre', '')
         email = body.get('email', '')
         telefono = body.get('phone') or body.get('telefono', '')
         mensaje = body.get('message') or body.get('mensaje', '')
         
+        logger.info(f"📝 Datos extraídos - Nombre: {nombre}, Email: {email}, Teléfono: {telefono}")
+        
         if not nombre or not email or not mensaje:
+            logger.error("❌ Faltan datos requeridos")
             raise HTTPException(status_code=400, detail="Faltan datos requeridos")
         
         # Enviar email usando el servicio mejorado
@@ -271,6 +277,8 @@ async def enviar_contacto(
                 "mensaje": mensaje
             }
         )
+        
+        logger.info("✅ Formulario de contacto procesado exitosamente")
         
         return {
             "success": True,

@@ -431,12 +431,25 @@ class SolarCalculator:
         # Costo estimado por kW
         cost_per_kw = 800000  # Estimación conservadora
         
+        # Calcular ahorros estimados
+        monthly_savings = monthly_consumption * 45  # ARS por kWh promedio
+        annual_savings = monthly_savings * 12
+        payback_years = (estimated_power * cost_per_kw) / annual_savings
+        
         return {
             "estimated_power_kwp": estimated_power,
             "estimated_area_m2": round(estimated_area, 1),
             "estimated_cost": round(estimated_power * cost_per_kw, 0),
             "estimated_panels": math.ceil(estimated_power * 1000 / 400),
-            "suitable_for_area": estimated_area <= 100  # Asumiendo área disponible de 100m²
+            "estimated_savings": round(annual_savings, 0),
+            "payback_years": round(payback_years, 1),
+            "suitable_for_area": estimated_area <= 100,  # Asumiendo área disponible de 100m²
+            "monthly_consumption": monthly_consumption,
+            "location": location,
+            "installation_type": installation_type,
+            "daily_generation": round(estimated_power * sun_hours * (1 - system_losses), 1),
+            "monthly_generation": round(estimated_power * sun_hours * (1 - system_losses) * 30, 1),
+            "yearly_generation": round(estimated_power * sun_hours * (1 - system_losses) * 365, 1)
         }
     
     def _map_panel_dict(self, panel_dict: Dict[str, Any]) -> SolarPanel:

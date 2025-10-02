@@ -98,14 +98,21 @@ class ImprovedEmailService:
         Envía notificación interna de nueva cotización
         """
         try:
+            logger.info(f"📧 Enviando notificación de cotización a marketing...")
+            logger.info(f"📋 Datos de cotización recibidos: {quote_data}")
+            
+            client_name = quote_data.get('request', {}).get('client_name', 'Cliente')
+            logger.info(f"👤 Nombre del cliente extraído: {client_name}")
+            
             msg = MIMEMultipart()
             msg['From'] = self.username
             msg['To'] = self.contact_email
-            msg['Subject'] = f"📊 Nueva cotización solar - {quote_data.get('client_name', 'Cliente')}"
+            msg['Subject'] = f"📊 Nueva cotización solar - {client_name}"
             
             body = self._create_quote_notification_body(quote_data)
             msg.attach(MIMEText(body, 'html', 'utf-8'))
             
+            logger.info(f"✅ Email de notificación preparado para {self.contact_email}")
             return self._send_email(msg)
             
         except Exception as e:
@@ -324,11 +331,11 @@ class ImprovedEmailService:
                 </div>
                 
                 <div class="content">
-                    <p><strong>Cliente:</strong> {quote_data.get('client_name', 'N/A')}</p>
-                    <p><strong>Email:</strong> {quote_data.get('client_email', 'N/A')}</p>
-                    <p><strong>Teléfono:</strong> {quote_data.get('client_phone', 'N/A')}</p>
-                    <p><strong>Ubicación:</strong> {quote_data.get('location', 'N/A')}</p>
-                    <p><strong>Consumo Mensual:</strong> {quote_data.get('monthly_consumption_kwh', 'N/A')} kWh</p>
+                    <p><strong>Cliente:</strong> {quote_data.get('request', {}).get('client_name', 'N/A')}</p>
+                    <p><strong>Email:</strong> {quote_data.get('request', {}).get('client_email', 'N/A')}</p>
+                    <p><strong>Teléfono:</strong> {quote_data.get('request', {}).get('client_phone', 'N/A')}</p>
+                    <p><strong>Ubicación:</strong> {quote_data.get('request', {}).get('location', 'N/A')}</p>
+                    <p><strong>Consumo Mensual:</strong> {quote_data.get('request', {}).get('monthly_consumption_kwh', 'N/A')} kWh</p>
                     <p><strong>Inversión Estimada:</strong> ${quote_data.get('design', {}).get('total_investment', 'N/A'):,.0f}</p>
                 </div>
             </div>
