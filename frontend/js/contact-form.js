@@ -9,6 +9,7 @@ class ContactFormManager {
   }
 
   init() {
+    console.log('🔧 Inicializando gestor de formulario de contacto...');
     this.initEventListeners();
     console.log('✅ Gestor de formulario de contacto inicializado');
   }
@@ -69,29 +70,29 @@ class ContactFormManager {
   validateFormData(data) {
     // Validar nombre
     if (!data.nombre.trim()) {
-      this.showFieldError('contactName', 'El nombre es obligatorio');
+      this.showFieldError('name', 'El nombre es obligatorio');
       return false;
     }
     
     // Validar email
     if (!data.email.trim()) {
-      this.showFieldError('contactEmail', 'El email es obligatorio');
+      this.showFieldError('email', 'El email es obligatorio');
       return false;
     }
     
     if (!this.isValidEmail(data.email)) {
-      this.showFieldError('contactEmail', 'El email no es válido');
+      this.showFieldError('email', 'El email no es válido');
       return false;
     }
     
     // Validar mensaje
     if (!data.mensaje.trim()) {
-      this.showFieldError('contactMessage', 'El mensaje es obligatorio');
+      this.showFieldError('message', 'El mensaje es obligatorio');
       return false;
     }
     
     if (data.mensaje.trim().length < 10) {
-      this.showFieldError('contactMessage', 'El mensaje debe tener al menos 10 caracteres');
+      this.showFieldError('message', 'El mensaje debe tener al menos 10 caracteres');
       return false;
     }
     

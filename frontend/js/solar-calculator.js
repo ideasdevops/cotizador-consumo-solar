@@ -82,21 +82,31 @@ class SolarCalculator {
   }
 
   setupEventListeners() {
+    console.log('🔧 Configurando event listeners...');
+    
     // Formulario principal
     const solarForm = document.getElementById('solar-form');
+    console.log('📋 Formulario solar encontrado:', solarForm);
     if (solarForm) {
       solarForm.addEventListener('submit', (e) => {
+        console.log('📝 Formulario enviado, iniciando cálculo completo...');
         e.preventDefault();
         this.calculateSolarSystem();
       });
+    } else {
+      console.error('❌ No se encontró el formulario solar-form');
     }
 
     // Botón de estimación rápida
     const estimateBtn = document.getElementById('estimate-btn');
+    console.log('⚡ Botón de estimación encontrado:', estimateBtn);
     if (estimateBtn) {
       estimateBtn.addEventListener('click', () => {
+        console.log('🚀 Iniciando estimación rápida...');
         this.performQuickEstimate();
       });
+    } else {
+      console.error('❌ No se encontró el botón estimate-btn');
     }
 
     // Checkbox de baterías

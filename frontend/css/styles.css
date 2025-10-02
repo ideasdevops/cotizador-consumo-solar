@@ -125,6 +125,25 @@ body {
   height: 40px;
 }
 
+.logo-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.logo-main {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: #666;
+}
+
+.logo-sub {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #FFD700;
+  margin-top: -2px;
+}
+
 .nav {
   display: flex;
   align-items: center;
