@@ -99,17 +99,25 @@ class SolarCalculator:
             )
             
             # 6. Crear diseño del sistema
+            # Mapear diccionarios a objetos Pydantic
+            selected_panels = [self._map_panel_dict(panel) for panel in components["panels"]]
+            selected_inverters = [self._map_inverter_dict(inverter) for inverter in components["inverters"]]
+            selected_batteries = [self._map_battery_dict(battery) for battery in components.get("batteries", [])]
+            selected_mounting = self._map_mounting_dict(components["mounting"])
+            selected_cables = [self._map_cable_dict(cable) for cable in components["cables"]]
+            selected_protection = [self._map_protection_dict(device) for device in components["protection"]]
+            
             design = SolarSystemDesign(
                 required_power_kwp=required_power,
                 panel_count=components["panel_count"],
                 inverter_count=components["inverter_count"],
                 battery_count=components.get("battery_count"),
-                selected_panels=components["panels"],
-                selected_inverters=components["inverters"],
-                selected_batteries=components.get("batteries"),
-                selected_mounting=components["mounting"],
-                selected_cables=components["cables"],
-                selected_protection=components["protection"],
+                selected_panels=selected_panels,
+                selected_inverters=selected_inverters,
+                selected_batteries=selected_batteries,
+                selected_mounting=selected_mounting,
+                selected_cables=selected_cables,
+                selected_protection=selected_protection,
                 daily_generation_kwh=energy_calculation["daily_generation"],
                 monthly_generation_kwh=energy_calculation["monthly_generation"],
                 annual_generation_kwh=energy_calculation["annual_generation"],
@@ -430,3 +438,100 @@ class SolarCalculator:
             "estimated_panels": math.ceil(estimated_power * 1000 / 400),
             "suitable_for_area": estimated_area <= 100  # Asumiendo área disponible de 100m²
         }
+    
+    def _map_panel_dict(self, panel_dict: Dict[str, Any]) -> SolarPanel:
+        """Mapear diccionario de panel a objeto SolarPanel"""
+        return SolarPanel(
+            id=panel_dict.get("id", "panel_default"),
+            name=panel_dict.get("model", "Panel Solar"),
+            brand=panel_dict.get("brand", "Marca"),
+            model=panel_dict.get("model", "Modelo"),
+            power_watts=float(panel_dict.get("power_watts", 400)),
+            efficiency=float(panel_dict.get("efficiency", 20.0)),
+            dimensions=panel_dict.get("dimensions", "2000x1000x40mm"),
+            weight=float(panel_dict.get("weight", 25.0)),
+            temperature_coefficient=float(panel_dict.get("temperature_coefficient", -0.4)),
+            max_voltage=float(panel_dict.get("max_voltage", 50.0)),
+            max_current=float(panel_dict.get("max_current", 10.0)),
+            price_ars=float(panel_dict.get("price_ars", 180000)),
+            warranty_years=int(panel_dict.get("warranty_years", 25)),
+            type=panel_dict.get("type", "monocristalino")
+        )
+    
+    def _map_inverter_dict(self, inverter_dict: Dict[str, Any]) -> Inverter:
+        """Mapear diccionario de inversor a objeto Inverter"""
+        return Inverter(
+            id=inverter_dict.get("id", "inverter_default"),
+            name=inverter_dict.get("model", "Inversor Solar"),
+            brand=inverter_dict.get("brand", "Marca"),
+            model=inverter_dict.get("model", "Modelo"),
+            power_kw=float(inverter_dict.get("power_kw", 5.0)),
+            efficiency=float(inverter_dict.get("efficiency", 96.0)),
+            input_voltage_range=inverter_dict.get("input_voltage_range", "90-500V"),
+            output_voltage=inverter_dict.get("output_voltage", "220V"),
+            max_input_current=float(inverter_dict.get("max_input_current", 12.0)),
+            has_mppt=inverter_dict.get("has_mppt", True),
+            has_wifi=inverter_dict.get("has_wifi", True),
+            price_ars=float(inverter_dict.get("price_ars", 800000)),
+            warranty_years=int(inverter_dict.get("warranty_years", 10)),
+            type=inverter_dict.get("type", "string")
+        )
+    
+    def _map_battery_dict(self, battery_dict: Dict[str, Any]) -> Battery:
+        """Mapear diccionario de batería a objeto Battery"""
+        return Battery(
+            id=battery_dict.get("id", "battery_default"),
+            name=battery_dict.get("model", "Batería Solar"),
+            brand=battery_dict.get("brand", "Marca"),
+            model=battery_dict.get("model", "Modelo"),
+            power_kwh=float(battery_dict.get("power_kw", 10.0)),
+            voltage=float(battery_dict.get("voltage", 48.0)),
+            cycles=int(battery_dict.get("cycles", 6000)),
+            efficiency=float(battery_dict.get("efficiency", 95.0)),
+            price_ars=float(battery_dict.get("price_ars", 3000000)),
+            warranty_years=int(battery_dict.get("warranty_years", 10)),
+            type=battery_dict.get("type", "litio")
+        )
+    
+    def _map_mounting_dict(self, mounting_dict: Dict[str, Any]) -> MountingSystem:
+        """Mapear diccionario de montaje a objeto MountingSystem"""
+        return MountingSystem(
+            id=mounting_dict.get("id", "mounting_default"),
+            name=mounting_dict.get("model", "Sistema de Montaje"),
+            brand=mounting_dict.get("brand", "Marca"),
+            model=mounting_dict.get("model", "Modelo"),
+            type=mounting_dict.get("type", "techo_residencial"),
+            material=mounting_dict.get("material", "aluminio"),
+            max_wind_load=float(mounting_dict.get("max_wind_load", 200.0)),
+            max_snow_load=float(mounting_dict.get("max_snow_load", 100.0)),
+            price_per_kw=float(mounting_dict.get("price_per_kw", 150000)),
+            installation_cost_per_kw=float(mounting_dict.get("installation_cost_per_kw", 50000)),
+            warranty_years=int(mounting_dict.get("warranty_years", 10))
+        )
+    
+    def _map_cable_dict(self, cable_dict: Dict[str, Any]) -> Cable:
+        """Mapear diccionario de cable a objeto Cable"""
+        return Cable(
+            id=cable_dict.get("id", "cable_default"),
+            name=cable_dict.get("model", "Cable Solar"),
+            brand=cable_dict.get("brand", "Marca"),
+            model=cable_dict.get("model", "Modelo"),
+            type=cable_dict.get("type", "dc"),
+            section_mm2=float(cable_dict.get("section_mm2", 4.0)),
+            length_meters=float(cable_dict.get("length_meters", 100.0)),
+            price_per_meter=float(cable_dict.get("price_per_meter", 250.0)),
+            price_ars=float(cable_dict.get("price_ars", 25000))
+        )
+    
+    def _map_protection_dict(self, protection_dict: Dict[str, Any]) -> ProtectionDevice:
+        """Mapear diccionario de protección a objeto ProtectionDevice"""
+        return ProtectionDevice(
+            id=protection_dict.get("id", "protection_default"),
+            name=protection_dict.get("model", "Dispositivo de Protección"),
+            brand=protection_dict.get("brand", "Marca"),
+            model=protection_dict.get("model", "Modelo"),
+            type=protection_dict.get("type", "fusible"),
+            current_rating=float(protection_dict.get("current_rating", 25.0)),
+            voltage_rating=float(protection_dict.get("voltage_rating", 1000.0)),
+            price_ars=float(protection_dict.get("price_ars", 45000))
+        )
