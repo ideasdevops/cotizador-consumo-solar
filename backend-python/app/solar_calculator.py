@@ -448,7 +448,7 @@ class SolarCalculator:
             model=panel_dict.get("model", "Modelo"),
             power_watts=float(panel_dict.get("power_watts", 400)),
             efficiency=float(panel_dict.get("efficiency", 20.0)),
-            dimensions=panel_dict.get("dimensions", "2000x1000x40mm"),
+            dimensions={"width": 2000, "height": 1000, "depth": 40},
             weight=float(panel_dict.get("weight", 25.0)),
             temperature_coefficient=float(panel_dict.get("temperature_coefficient", -0.4)),
             max_voltage=float(panel_dict.get("max_voltage", 50.0)),
