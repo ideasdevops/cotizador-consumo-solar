@@ -60,6 +60,7 @@ class ContactFormManager {
     return {
       nombre: formData.get('name') || '',
       email: formData.get('email') || '',
+      telefono: formData.get('phone') || '',
       mensaje: formData.get('message') || '',
       fecha: new Date().toISOString().split('T')[0]
     };
@@ -104,25 +105,30 @@ class ContactFormManager {
 
   async sendContactForm(data) {
     try {
-      // Simular envío exitoso (ya que no tenemos backend configurado)
-      console.log('📧 Datos del formulario a enviar:', data);
+      console.log('📧 Enviando formulario de contacto:', data);
       
-      // Simular delay de red
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Simular éxito
-      console.log('✅ Formulario enviado exitosamente (simulado)');
-      
-      // Aquí podrías integrar con servicios como:
-      // - EmailJS
-      // - Formspree
-      // - Netlify Forms
-      // - O cualquier otro servicio de formularios
-      
-      return true;
+      const response = await fetch('/contacto/enviar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('✅ Formulario enviado exitosamente:', result);
+        return true;
+      } else {
+        const error = await response.json();
+        console.error('❌ Error del servidor:', error);
+        this.showErrorMessage(error.detail || 'Error enviando el mensaje');
+        return false;
+      }
       
     } catch (error) {
-      console.error('❌ Error enviando formulario:', error);
+      console.error('❌ Error de conexión:', error);
+      this.showErrorMessage('Error de conexión. Por favor, verifica tu conexión a internet.');
       return false;
     }
   }

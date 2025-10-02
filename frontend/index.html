@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
   <!-- SEO Meta Tags -->
   <title>Cotizador de Consumo Solar Online - Sistemas Fotovoltaicos | Sumpetrol S.A</title>
   <meta name="description" content="Cotizador online profesional para sistemas de energía solar fotovoltaica en Argentina. Calcula tu consumo energético y dimensiona tu instalación solar. ¡Ahorra en tu factura de luz!" />
@@ -78,7 +81,7 @@
     <div class="container">
       <div class="header-content">
         <div class="logo">
-          <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNGRkZGRkYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSI4IiB5PSI4Ij4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjRkY2MzAwIi8+Cjwvc3ZnPgo8L3N2Zz4K" alt="Sumpetrol Logo" />
+          <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiMwMDc4Q0MiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSI4IiB5PSI4Ij4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjRkZGRkZGIi8+CjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjMiIGZpbGw9IiNGRkZGRkYiLz4KPC9zdmc+Cjwvc3ZnPgo=" alt="Sumpetrol Logo" />
           <span>SUMPETROL</span>
         </div>
         <nav class="nav">
@@ -176,11 +179,29 @@
               <select id="location" name="location" required>
                 <option value="">Seleccionar ubicación...</option>
                 <option value="buenos-aires">Buenos Aires</option>
+                <option value="ciudad-autonoma-buenos-aires">Ciudad Autónoma de Buenos Aires</option>
+                <option value="catamarca">Catamarca</option>
+                <option value="chaco">Chaco</option>
+                <option value="chubut">Chubut</option>
                 <option value="cordoba">Córdoba</option>
-                <option value="santa-fe">Santa Fe</option>
+                <option value="corrientes">Corrientes</option>
+                <option value="entre-rios">Entre Ríos</option>
+                <option value="formosa">Formosa</option>
+                <option value="jujuy">Jujuy</option>
+                <option value="la-pampa">La Pampa</option>
+                <option value="la-rioja">La Rioja</option>
                 <option value="mendoza">Mendoza</option>
+                <option value="misiones">Misiones</option>
+                <option value="neuquen">Neuquén</option>
+                <option value="rio-negro">Río Negro</option>
+                <option value="salta">Salta</option>
+                <option value="san-juan">San Juan</option>
+                <option value="san-luis">San Luis</option>
+                <option value="santa-cruz">Santa Cruz</option>
+                <option value="santa-fe">Santa Fe</option>
+                <option value="santiago-del-estero">Santiago del Estero</option>
+                <option value="tierra-del-fuego">Tierra del Fuego</option>
                 <option value="tucuman">Tucumán</option>
-                <option value="other">Otra ubicación</option>
               </select>
             </div>
             <div class="form-group">
@@ -716,19 +737,19 @@
         <form class="contact-form" id="contactForm">
           <div class="form-group">
             <label for="name">Nombre</label>
-            <input type="text" id="name" required>
+            <input type="text" id="name" name="name" required>
           </div>
           <div class="form-group">
             <label for="email">Email</label>
-            <input type="email" id="email" required>
+            <input type="email" id="email" name="email" required>
           </div>
           <div class="form-group">
             <label for="phone">Teléfono</label>
-            <input type="tel" id="phone">
+            <input type="tel" id="phone" name="phone">
           </div>
           <div class="form-group">
             <label for="message">Mensaje</label>
-            <textarea id="message" rows="4" required></textarea>
+            <textarea id="message" name="message" rows="4" required></textarea>
           </div>
           <button type="submit" class="btn btn-primary">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -748,7 +769,7 @@
         <!-- Información de la Empresa -->
         <div class="footer-section">
           <div class="footer-logo">
-            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNGRkZGRkYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSI4IiB5PSI4Ij4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjRkY2MzAwIi8+Cjwvc3ZnPgo8L3N2Zz4K" alt="Sumpetrol Logo" />
+            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiMwMDc4Q0MiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSI4IiB5PSI4Ij4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjRkZGRkZGIi8+CjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjMiIGZpbGw9IiNGRkZGRkYiLz4KPC9zdmc+Cjwvc3ZnPgo=" alt="Sumpetrol Logo" />
             <span>SUMPETROL</span>
           </div>
           <p class="footer-description">
@@ -834,11 +855,7 @@
               </div>
             </div>
             <div class="contact-item">
-              <i class="fas fa-comments"></i>
-              <div>
-                <span>Asistencia</span>
-                <span>Asistente 24/7</span>
-              </div>
+              <i class="fas fa-comments"></i>         
             </div>
           </div>
         </div>
@@ -848,7 +865,7 @@
       <div class="footer-bottom">
         <div class="footer-bottom-content">
           <div class="footer-bottom-left">
-            <p>&copy; 2025 Sumpetrol S.A. Todos los derechos reservados. <a href="https://www.ideasdevops.com"> Desarrollo: IdeasDevops </a>
+            <p>&copy; 2025 Sumpetrol S.A. Todos los derechos reservados. <a href="https://www.ideasdevops.com"> IdeasDevops </a>
             </p>
             <div class="footer-legal">
               <a href="#" target="_blank">Términos y Condiciones</a>
@@ -886,12 +903,108 @@
           <span class="stat-label">Satisfacción Cliente</span>
         </div>
         <div class="stat-item">
-          <span class="stat-number">10+</span>
+          <span class="stat-number">40+</span>
           <span class="stat-label">Años de Experiencia</span>
         </div>
       </div>
     </div>
   </footer>
+
+  <!-- Modal de Estimación Rápida -->
+  <div id="quickEstimateModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2><i class="fas fa-bolt"></i> Estimación Rápida</h2>
+        <button class="modal-close" onclick="closeModal('quickEstimateModal')">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="quickEstimateContent">
+          <!-- Contenido se llena dinámicamente -->
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" onclick="closeModal('quickEstimateModal')">
+            <i class="fas fa-times"></i> Cerrar
+          </button>
+          <button class="btn btn-primary" onclick="downloadQuickEstimatePDF()">
+            <i class="fas fa-download"></i> Descargar PDF
+          </button>
+          <button class="btn btn-success" onclick="requestDetailedQuote()">
+            <i class="fas fa-calculator"></i> Cotización Completa
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Cotización Completa -->
+  <div id="detailedQuoteModal" class="modal" style="display: none;">
+    <div class="modal-content large">
+      <div class="modal-header">
+        <h2><i class="fas fa-solar-panel"></i> Cotización Completa</h2>
+        <button class="modal-close" onclick="closeModal('detailedQuoteModal')">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="detailedQuoteContent">
+          <!-- Contenido se llena dinámicamente -->
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" onclick="closeModal('detailedQuoteModal')">
+            <i class="fas fa-times"></i> Cerrar
+          </button>
+          <button class="btn btn-primary" onclick="downloadDetailedQuotePDF()">
+            <i class="fas fa-download"></i> Descargar PDF Completo
+          </button>
+          <button class="btn btn-success" onclick="requestPersonalizedQuote()">
+            <i class="fas fa-envelope"></i> Solicitar Cotización Personalizada
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Información del Cliente -->
+  <div id="clientInfoModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2><i class="fas fa-user"></i> Información del Cliente</h2>
+        <button class="modal-close" onclick="closeModal('clientInfoModal')">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="clientInfoForm">
+          <div class="form-group">
+            <label for="clientName">Nombre Completo *</label>
+            <input type="text" id="clientName" name="clientName" required>
+          </div>
+          <div class="form-group">
+            <label for="clientEmail">Email *</label>
+            <input type="email" id="clientEmail" name="clientEmail" required>
+          </div>
+          <div class="form-group">
+            <label for="clientPhone">Teléfono</label>
+            <input type="tel" id="clientPhone" name="clientPhone">
+          </div>
+          <div class="form-group">
+            <label for="clientAddress">Dirección del Proyecto</label>
+            <input type="text" id="clientAddress" name="clientAddress">
+          </div>
+        </form>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" onclick="closeModal('clientInfoModal')">
+            <i class="fas fa-times"></i> Cancelar
+          </button>
+          <button class="btn btn-primary" onclick="submitClientInfo()">
+            <i class="fas fa-check"></i> Continuar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Scripts -->
   <script src="js/app.js"></script>

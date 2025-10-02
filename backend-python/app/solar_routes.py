@@ -263,6 +263,9 @@ async def create_solar_quote(
         # Guardar cotización
         quotes_storage[quote_id] = quote_response
         
+        # Guardar en NocoDB (en background)
+        background_tasks.add_task(save_quote_to_nocodb, quote_response)
+        
         # Enviar email de confirmación (en background)
         if request.client_email:
             background_tasks.add_task(send_quote_email, quote_response)
@@ -761,6 +764,44 @@ async def get_external_solar_materials() -> List[Dict[str, Any]]:
             "fecha_actualizacion": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
     ]
+
+async def save_quote_to_nocodb(quote: SolarQuoteResponse):
+    """Guardar cotización en NocoDB (función de background)"""
+    try:
+        logger.info(f"Guardando cotización {quote.quote_id} en NocoDB...")
+        
+        # Preparar datos para NocoDB
+        quote_data = {
+            "id_cotizacion": quote.quote_id,
+            "id_cliente": quote.request.client_email or "anonimo",
+            "nombre_cliente": quote.request.client_name or "Cliente Anónimo",
+            "email_cliente": quote.request.client_email or "",
+            "ubicacion_proyecto": quote.request.location,
+            "consumo_mensual_kwh": quote.request.monthly_consumption_kwh,
+            "tipo_tarifa": quote.request.tariff_type,
+            "area_disponible_m2": quote.request.available_area_m2,
+            "tipo_instalacion": quote.request.installation_type,
+            "potencia_requerida_kwp": quote.design.required_power_kwp,
+            "cantidad_paneles": quote.design.panel_count,
+            "generacion_mensual_kwh": quote.design.monthly_generation_kwh,
+            "ahorro_mensual_ars": quote.design.monthly_savings,
+            "inversion_total_ars": quote.design.total_investment,
+            "roi_anos": quote.design.payback_years,
+            "fecha_cotizacion": quote.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+            "estado_cotizacion": "generada",
+            "notas_adicionales": f"Tipo de batería: {quote.request.battery_type or 'No especificado'}"
+        }
+        
+        # Guardar en NocoDB
+        success = await nocodb_service.save_solar_quote(quote_data)
+        
+        if success:
+            logger.info(f"Cotización {quote.quote_id} guardada exitosamente en NocoDB")
+        else:
+            logger.error(f"Error guardando cotización {quote.quote_id} en NocoDB")
+        
+    except Exception as e:
+        logger.error(f"Error guardando cotización en NocoDB: {e}")
 
 async def send_quote_email(quote: SolarQuoteResponse):
     """Enviar email con la cotización (función de background)"""

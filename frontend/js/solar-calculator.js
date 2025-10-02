@@ -252,7 +252,7 @@ class SolarCalculator {
         const quote = await response.json();
         console.log('Cotización recibida:', quote);
         this.currentQuote = quote;
-        this.displayResults(quote.design);
+        this.showDetailedQuoteModal(quote);
         this.showSuccess('Cotización generada exitosamente');
       } else {
         const errorText = await response.text();
@@ -304,7 +304,7 @@ class SolarCalculator {
 
       if (response.ok) {
         const estimation = await response.json();
-        this.displayQuickEstimate(estimation);
+        this.showQuickEstimateModal(estimation);
       } else {
         const error = await response.json();
         this.showError(error.detail || 'Error en estimación');
@@ -641,6 +641,175 @@ class SolarCalculator {
     
     URL.revokeObjectURL(url);
   }
+
+  // Métodos para modales
+  showQuickEstimateModal(estimation) {
+    const modal = document.getElementById('quickEstimateModal');
+    const content = document.getElementById('quickEstimateContent');
+    
+    content.innerHTML = `
+      <div class="quick-estimate-summary">
+        <div class="estimate-card">
+          <h3><i class="fas fa-bolt"></i> Potencia Estimada</h3>
+          <div class="value">${estimation.estimated_power_kwp} kWp</div>
+          <div class="label">Sistema Solar</div>
+        </div>
+        <div class="estimate-card">
+          <h3><i class="fas fa-solar-panel"></i> Paneles</h3>
+          <div class="value">${estimation.estimated_panels}</div>
+          <div class="label">Unidades</div>
+        </div>
+        <div class="estimate-card">
+          <h3><i class="fas fa-dollar-sign"></i> Inversión</h3>
+          <div class="value">${this.formatCurrency(estimation.estimated_cost)}</div>
+          <div class="label">Aproximada</div>
+        </div>
+        <div class="estimate-card">
+          <h3><i class="fas fa-chart-line"></i> Ahorro Anual</h3>
+          <div class="value">${this.formatCurrency(estimation.estimated_savings)}</div>
+          <div class="label">Estimado</div>
+        </div>
+      </div>
+      <div class="quote-section">
+        <h3><i class="fas fa-info-circle"></i> Información de la Estimación</h3>
+        <p><strong>Consumo mensual:</strong> ${estimation.monthly_consumption} kWh</p>
+        <p><strong>Ubicación:</strong> ${estimation.location}</p>
+        <p><strong>Tipo de instalación:</strong> ${estimation.installation_type}</p>
+        <p><strong>Fecha de estimación:</strong> ${new Date().toLocaleDateString('es-AR')}</p>
+        <p class="text-muted">Esta es una estimación preliminar. Para obtener una cotización precisa, solicita una cotización completa con nuestros expertos.</p>
+      </div>
+    `;
+    
+    modal.style.display = 'flex';
+    this.currentEstimation = estimation;
+  }
+
+  showDetailedQuoteModal(quote) {
+    const modal = document.getElementById('detailedQuoteModal');
+    const content = document.getElementById('detailedQuoteContent');
+    
+    const design = quote.design;
+    
+    content.innerHTML = `
+      <div class="detailed-quote-summary">
+        <div class="quote-section">
+          <h3><i class="fas fa-bolt"></i> Dimensionamiento del Sistema</h3>
+          <div class="quote-grid">
+            <div class="quote-item">
+              <span class="label">Potencia del Sistema:</span>
+              <span class="value">${design.required_power_kwp} kWp</span>
+            </div>
+            <div class="quote-item">
+              <span class="label">Cantidad de Paneles:</span>
+              <span class="value">${design.panel_count} unidades</span>
+            </div>
+            <div class="quote-item">
+              <span class="label">Cantidad de Inversores:</span>
+              <span class="value">${design.inverter_count} unidades</span>
+            </div>
+            <div class="quote-item">
+              <span class="label">Eficiencia del Sistema:</span>
+              <span class="value">${design.system_efficiency}%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="quote-section">
+          <h3><i class="fas fa-sun"></i> Generación Energética</h3>
+          <div class="quote-grid">
+            <div class="quote-item">
+              <span class="label">Generación Diaria:</span>
+              <span class="value">${design.daily_generation_kwh} kWh</span>
+            </div>
+            <div class="quote-item">
+              <span class="label">Generación Mensual:</span>
+              <span class="value">${design.monthly_generation_kwh} kWh</span>
+            </div>
+            <div class="quote-item">
+              <span class="label">Generación Anual:</span>
+              <span class="value">${design.annual_generation_kwh} kWh</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="quote-section">
+          <h3><i class="fas fa-dollar-sign"></i> Análisis Económico</h3>
+          <div class="quote-grid">
+            <div class="quote-item">
+              <span class="label">Ahorro Mensual:</span>
+              <span class="value">${this.formatCurrency(design.monthly_savings)}</span>
+            </div>
+            <div class="quote-item">
+              <span class="label">Ahorro Anual:</span>
+              <span class="value">${this.formatCurrency(design.annual_savings)}</span>
+            </div>
+            <div class="quote-item">
+              <span class="label">Retorno de Inversión:</span>
+              <span class="value">${design.payback_years} años</span>
+            </div>
+            <div class="quote-item">
+              <span class="label">ROI:</span>
+              <span class="value">${design.roi_percentage}%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="quote-section">
+          <h3><i class="fas fa-receipt"></i> Desglose de Costos</h3>
+          <div class="quote-grid">
+            <div class="quote-item">
+              <span class="label">Paneles Solares:</span>
+              <span class="value">${this.formatCurrency(design.panels_cost)}</span>
+            </div>
+            <div class="quote-item">
+              <span class="label">Inversores:</span>
+              <span class="value">${this.formatCurrency(design.inverters_cost)}</span>
+            </div>
+            <div class="quote-item">
+              <span class="label">Sistema de Montaje:</span>
+              <span class="value">${this.formatCurrency(design.mounting_cost)}</span>
+            </div>
+            <div class="quote-item">
+              <span class="label">Instalación:</span>
+              <span class="value">${this.formatCurrency(design.installation_cost)}</span>
+            </div>
+            <div class="quote-item">
+              <span class="label">Total de Inversión:</span>
+              <span class="value">${this.formatCurrency(design.total_investment)}</span>
+            </div>
+          </div>
+        </div>
+
+        ${design.battery_count > 0 ? `
+        <div class="quote-section">
+          <h3><i class="fas fa-battery-full"></i> Sistema de Baterías</h3>
+          <div class="quote-grid">
+            <div class="quote-item">
+              <span class="label">Cantidad de Baterías:</span>
+              <span class="value">${design.battery_count} unidades</span>
+            </div>
+            <div class="quote-item">
+              <span class="label">Costo de Baterías:</span>
+              <span class="value">${this.formatCurrency(design.batteries_cost)}</span>
+            </div>
+          </div>
+        </div>
+        ` : ''}
+
+        <div class="quote-section">
+          <h3><i class="fas fa-info-circle"></i> Información de la Cotización</h3>
+          <p><strong>ID de Cotización:</strong> ${quote.quote_id}</p>
+          <p><strong>Fecha de Generación:</strong> ${new Date(quote.created_at).toLocaleDateString('es-AR')}</p>
+          <p><strong>Válida hasta:</strong> ${new Date(quote.valid_until).toLocaleDateString('es-AR')}</p>
+          <p><strong>Cliente:</strong> ${quote.request.client_name || 'No especificado'}</p>
+          <p><strong>Email:</strong> ${quote.request.client_email || 'No especificado'}</p>
+          <p class="text-muted">Esta cotización es válida por 30 días y está sujeta a cambios en precios de materiales.</p>
+        </div>
+      </div>
+    `;
+    
+    modal.style.display = 'flex';
+  }
 }
 
 // Inicializar calculadora solar cuando el DOM esté listo
@@ -666,3 +835,128 @@ function exportQuote() {
     window.solarCalculator.exportQuote();
   }
 }
+
+// Funciones globales para modales
+function closeModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    modal.style.display = 'none';
+  }
+}
+
+function downloadQuickEstimatePDF() {
+  if (window.solarCalculator && window.solarCalculator.currentEstimation) {
+    // Generar PDF de estimación rápida
+    const estimation = window.solarCalculator.currentEstimation;
+    const pdfData = {
+      type: 'quick_estimate',
+      data: estimation,
+      generated_at: new Date().toISOString()
+    };
+    
+    const dataStr = JSON.stringify(pdfData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `estimacion_rapida_${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+    
+    URL.revokeObjectURL(url);
+    
+    window.solarCalculator.showSuccess('Estimación descargada exitosamente');
+  }
+}
+
+function downloadDetailedQuotePDF() {
+  if (window.solarCalculator && window.solarCalculator.currentQuote) {
+    // Generar PDF de cotización detallada
+    const quote = window.solarCalculator.currentQuote;
+    const pdfData = {
+      type: 'detailed_quote',
+      data: quote,
+      generated_at: new Date().toISOString()
+    };
+    
+    const dataStr = JSON.stringify(pdfData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `cotizacion_detallada_${quote.quote_id}.json`;
+    link.click();
+    
+    URL.revokeObjectURL(url);
+    
+    window.solarCalculator.showSuccess('Cotización descargada exitosamente');
+  }
+}
+
+function requestDetailedQuote() {
+  closeModal('quickEstimateModal');
+  // Scroll al formulario de cotización completa
+  const cotizadorSection = document.getElementById('cotizador');
+  if (cotizadorSection) {
+    cotizadorSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function requestPersonalizedQuote() {
+  closeModal('detailedQuoteModal');
+  // Scroll al formulario de contacto
+  const contactoSection = document.getElementById('contacto');
+  if (contactoSection) {
+    contactoSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function submitClientInfo() {
+  const form = document.getElementById('clientInfoForm');
+  const formData = new FormData(form);
+  
+  const clientData = {
+    name: formData.get('clientName'),
+    email: formData.get('clientEmail'),
+    phone: formData.get('clientPhone'),
+    address: formData.get('clientAddress')
+  };
+  
+  // Validar datos
+  if (!clientData.name || !clientData.email) {
+    alert('Por favor completa los campos obligatorios (Nombre y Email)');
+    return;
+  }
+  
+  // Guardar datos del cliente
+  if (window.solarCalculator) {
+    window.solarCalculator.clientInfo = clientData;
+  }
+  
+  closeModal('clientInfoModal');
+  
+  // Continuar con la cotización
+  if (window.solarCalculator) {
+    window.solarCalculator.calculateSolarSystem();
+  }
+}
+
+// Cerrar modal al hacer clic fuera del contenido
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('modal')) {
+    e.target.style.display = 'none';
+  }
+});
+
+// Cerrar modal con tecla Escape
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+      if (modal.style.display === 'flex') {
+        modal.style.display = 'none';
+      }
+    });
+  }
+});
