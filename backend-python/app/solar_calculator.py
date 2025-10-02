@@ -500,7 +500,7 @@ class SolarCalculator:
             name=mounting_dict.get("model", "Sistema de Montaje"),
             brand=mounting_dict.get("brand", "Marca"),
             model=mounting_dict.get("model", "Modelo"),
-            type=mounting_dict.get("type", "techo_residencial"),
+            type="techo_residencial",
             material=mounting_dict.get("material", "aluminio"),
             max_wind_load=float(mounting_dict.get("max_wind_load", 200.0)),
             max_snow_load=float(mounting_dict.get("max_snow_load", 100.0)),
