@@ -348,9 +348,9 @@ class SolarCalculator:
         
         # Garantía del sistema (mínima entre componentes)
         warranty_years = min(
-            min(panel.warranty_years for panel in components["panels"]),
-            min(inverter.warranty_years for inverter in components["inverters"]),
-            mounting.warranty_years
+            min(panel.get("warranty_years", 25) for panel in components["panels"]),
+            min(inverter.get("warranty_years", 10) for inverter in components["inverters"]),
+            mounting.get("warranty_years", 10)
         )
         costs["warranty_years"] = warranty_years
         
