@@ -306,36 +306,36 @@ class SolarCalculator:
         costs = {}
         
         # Costo de paneles
-        panels_cost = sum(panel.price_ars for panel in components["panels"])
+        panels_cost = sum(panel.get("price_ars", 0) for panel in components["panels"])
         costs["panels_cost"] = panels_cost
         
         # Costo de inversores
-        inverters_cost = sum(inverter.price_ars for inverter in components["inverters"])
+        inverters_cost = sum(inverter.get("price_ars", 0) for inverter in components["inverters"])
         costs["inverters_cost"] = inverters_cost
         
         # Costo de baterías (si aplica)
         if "batteries" in components:
-            batteries_cost = sum(battery.price_ars for battery in components["batteries"])
+            batteries_cost = sum(battery.get("price_ars", 0) for battery in components["batteries"])
             costs["batteries_cost"] = batteries_cost
         else:
             costs["batteries_cost"] = 0
         
         # Costo de montaje
         mounting = components["mounting"]
-        system_power_kw = sum(panel.power_watts for panel in components["panels"]) / 1000
-        mounting_cost = system_power_kw * mounting.price_per_kw
+        system_power_kw = sum(panel.get("power_watts", 0) for panel in components["panels"]) / 1000
+        mounting_cost = system_power_kw * mounting.get("price_per_kw", 0)
         costs["mounting_cost"] = mounting_cost
         
         # Costo de cables
-        cables_cost = sum(cable.price_per_meter * cable.length_meters for cable in components["cables"])
+        cables_cost = sum(cable.get("price_ars", 0) for cable in components["cables"])
         costs["cables_cost"] = cables_cost
         
         # Costo de protección
-        protection_cost = sum(device.price_ars for device in components["protection"])
+        protection_cost = sum(device.get("price_ars", 0) for device in components["protection"])
         costs["protection_cost"] = protection_cost
         
-        # Costo de instalación
-        installation_cost = system_power_kw * mounting.installation_cost_per_kw
+        # Costo de instalación (estimado)
+        installation_cost = system_power_kw * 50000  # $50,000 ARS por kW
         costs["installation_cost"] = installation_cost
         
         # Costo de permisos (estimado)
