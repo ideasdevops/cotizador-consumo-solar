@@ -1,6 +1,6 @@
 /**
- * Servicio de Email usando Nodemailer
- * Para el Cotizador de Construcción - Sumpetrol
+ * Servicio de Email usando Python FastAPI
+ * Para el Cotizador de Consumo Solar - Sumpetrol
  */
 
 class EmailService {
@@ -19,34 +19,18 @@ class EmailService {
   }
 
   /**
-   * Envía email de cotización
+   * Envía email de cotización usando Python FastAPI
    */
   async sendQuoteEmail(quoteData) {
     try {
       console.log('📧 Enviando email de cotización...');
       
-      const emailData = {
-        to: quoteData.email,
-        subject: `Cotización de Construcción - ${quoteData.nombre}`,
-        html: this.createQuoteEmailHTML(quoteData),
-        attachments: []
-      };
-      
-      // Si hay PDF, agregarlo como adjunto
-      if (quoteData.pdfBlob) {
-        emailData.attachments.push({
-          filename: `cotizacion_${quoteData.id}.pdf`,
-          content: quoteData.pdfBlob,
-          contentType: 'application/pdf'
-        });
-      }
-      
-      const response = await fetch('/api/email/send', {
+      const response = await fetch('/api/solar/quote', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(emailData)
+        body: JSON.stringify(quoteData)
       });
       
       if (response.ok) {
@@ -78,12 +62,12 @@ class EmailService {
         html: this.createContactEmailHTML(contactData)
       };
       
-      const response = await fetch('/api/email/contact', {
+      const response = await fetch('/api/contacto/enviar', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(emailData)
+        body: JSON.stringify(contactData)
       });
       
       if (response.ok) {
