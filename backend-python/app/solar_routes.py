@@ -771,7 +771,7 @@ async def send_quote_email(quote: SolarQuoteResponse):
         from .email_service_improved import improved_email_service
         
         # Enviar email al cliente
-        success = improved_email_service.send_quote_email(
+        success = improved_email_service.send_solar_quote_email(
             customer_email=quote.request.client_email,
             customer_name=quote.request.client_name,
             quote_data=quote.dict()
